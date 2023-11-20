@@ -12,6 +12,7 @@ const SUPPORTED_LOCALES = [
     'es', // Spanish
     'fi', // Finnish
     'fr', // French
+    'hi', // Hindi
     'hr', // Croatian
     'hu', // Hungarian
     'id', // Indonesian
