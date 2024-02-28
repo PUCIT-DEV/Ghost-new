@@ -3,6 +3,7 @@ const knex = require('knex');
 const os = require('os');
 const fs = require('fs');
 
+const HttpContext = require('@tryghost/http-context/build/HttpContext').default;
 const logging = require('@tryghost/logging');
 const metrics = require('@tryghost/metrics');
 const config = require('../../../shared/config');
@@ -64,10 +65,47 @@ function configure(dbConfig) {
 
 if (!knexInstance && config.get('database') && config.get('database').client) {
     knexInstance = knex(configure(config.get('database')));
+
     if (config.get('telemetry:connectionPool')) {
         const instrumentation = new ConnectionPoolInstrumentation({knex: knexInstance, logging, metrics, config});
         instrumentation.instrument();
     }
+
+    // Monkey patch the acquireConnection and releaseConnection methods to store / retrieve the connection
+    // from the http context (if in the http context), so that we can reuse the connection within the same http context
+    const HTTP_CTX_KEY_DB_CONNECTION = 'db_connection';
+    const originalAcquireConnection = knexInstance.client.acquireConnection;
+    const originalReleaseConnection = knexInstance.client.releaseConnection;
+
+    knexInstance.client.acquireConnection = async function () {
+        const httpContextConnection = HttpContext.get(HTTP_CTX_KEY_DB_CONNECTION);
+
+        // If there is a connection in the http context, use it
+        if (httpContextConnection) {
+            return httpContextConnection;
+        }
+
+        // Otherwise, acquire a new connection and store it in the http context,
+        // but make sure to release it when the http context is ended
+        const connection = originalAcquireConnection.call(knexInstance.client);
+
+        HttpContext.set(HTTP_CTX_KEY_DB_CONNECTION, connection, (value) => {
+            originalReleaseConnection.call(knexInstance.client, value);
+        });
+
+        return connection;
+    };
+
+    knexInstance.client.releaseConnection = (connection) => {
+        const httpContextConnection = HttpContext.get(HTTP_CTX_KEY_DB_CONNECTION);
+
+        // Retain the connection if it's the same as the one in the http context
+        if (httpContextConnection?.__knexUid === connection.__knexUid) {
+            return;
+        }
+
+        return originalReleaseConnection.call(knexInstance.client, connection);
+    };
 }
 
 module.exports = knexInstance;
