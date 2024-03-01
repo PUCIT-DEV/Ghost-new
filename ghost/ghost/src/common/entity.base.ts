@@ -83,16 +83,16 @@ export class Entity<Data> {
         this.actor = actor;
     }
 
-    get id() {
-        return this.attr.id;
+    get id(): ObjectID {
+        return this.attr.id as ObjectID;
     }
 
-    get createdAt() {
-        return this.attr.createdAt;
+    get createdAt(): Date {
+        return this.attr.createdAt as Date;
     }
 
-    get createdBy() {
-        return this.attr.createdBy;
+    get createdBy(): Actor {
+        return this.attr.createdBy as Actor;
     }
 
     get updatedAt() {
