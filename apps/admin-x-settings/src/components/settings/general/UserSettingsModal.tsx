@@ -1,31 +1,26 @@
 import NiceModal from '@ebay/nice-modal-react';
-import {HostLimitError, useLimiter} from '../../../hooks/useLimiter';
-import {Modal, Radio, TextField, showToast} from '@tryghost/admin-x-design-system';
-import {useBrowseRoles} from '@tryghost/admin-x-framework/api/roles';
+import {CustomField} from '@tryghost/admin-x-framework/api/customFields';
+import {Modal, showToast} from '@tryghost/admin-x-design-system';
+import {SocialLink} from '@tryghost/admin-x-framework/api/socialLinks';
+import {useBrowseCustomFields} from '@tryghost/admin-x-framework/api/customFields';
+import {useBrowseSocialLinks} from '@tryghost/admin-x-framework/api/socialLinks';
 import {useEffect, useRef, useState} from 'react';
 import {useHandleError} from '@tryghost/admin-x-framework/hooks';
 import {useRouting} from '@tryghost/admin-x-framework/routing';
 
-type RoleType = 'administrator' | 'editor' | 'author' | 'contributor';
-
 const UserSettingsModal = NiceModal.create(() => {
     const modal = NiceModal.useModal();
-    const rolesQuery = useBrowseRoles();
-    const assignableRolesQuery = useBrowseRoles({
-        searchParams: {limit: 'all', permissions: 'assign'}
-    });
-    const limiter = useLimiter();
+    const customFieldsQuery = useBrowseCustomFields();
+    const socialLinksQuery = useBrowseSocialLinks();
 
     const {updateRoute} = useRouting();
 
     const focusRef = useRef<HTMLInputElement>(null);
-    const [email, setEmail] = useState<string>('');
     const [saveState, setSaveState] = useState<'saving' | 'saved' | 'error' | ''>('');
-    const [role, setRole] = useState<RoleType>('contributor');
-    const [errors, setErrors] = useState<{
-        email?: string;
-        role?: string;
-    }>({});
+    // const [errors, setErrors] = useState<{
+    //     email?: string;
+    //     role?: string;
+    // }>({});
 
     const handleError = useHandleError();
 
@@ -43,34 +38,19 @@ const UserSettingsModal = NiceModal.create(() => {
         }
     }, [saveState]);
 
-    useEffect(() => {
-        if (role !== 'contributor' && limiter?.isLimited('staff')) {
-            limiter.errorIfWouldGoOverLimit('staff').then(() => {
-                setErrors(e => ({...e, role: undefined}));
-            }).catch((error) => {
-                if (error instanceof HostLimitError) {
-                    setErrors(e => ({...e, role: error.message}));
-                    return;
-                } else {
-                    throw error;
-                }
-            });
-        } else {
-            setErrors(e => ({...e, role: undefined}));
-        }
-    }, [limiter, role]);
-
-    if (!rolesQuery.data?.roles || !assignableRolesQuery.data?.roles) {
+    if (!customFieldsQuery.data?.fields) {
         return null;
     }
 
-    const assignableRoles = assignableRolesQuery.data.roles;
+    if (!socialLinksQuery.data?.fields) {
+        return null;
+    }
 
-    let okLabel = 'Send invitation now';
+    let okLabel = 'Save';
     if (saveState === 'saving') {
         okLabel = 'Sending...';
     } else if (saveState === 'saved') {
-        okLabel = 'Invite sent!';
+        okLabel = 'Saved';
     } else if (saveState === 'error') {
         okLabel = 'Retry';
     }
@@ -105,35 +85,6 @@ const UserSettingsModal = NiceModal.create(() => {
         }
     };
 
-    const roleOptions = [
-        {
-            hint: 'Can create and edit their own posts, but cannot publish. An Editor needs to approve and publish for them.',
-            label: 'Contributor',
-            value: 'contributor'
-        },
-        {
-            hint: 'A trusted user who can create, edit and publish their own posts, but can’t modify others.',
-            label: 'Author',
-            value: 'author'
-        },
-        {
-            hint: 'Can invite and manage other Authors and Contributors, as well as edit and publish any posts on the site.',
-            label: 'Editor',
-            value: 'editor'
-        },
-        {
-            hint: 'Trusted staff user who should be able to manage all content and users, as well as site settings and options.',
-            label: 'Administrator',
-            value: 'administrator'
-        }
-    ];
-
-    const allowedRoleOptions = roleOptions.filter((option) => {
-        return assignableRoles.some((r) => {
-            return r.name === option.label;
-        });
-    });
-
     return (
         <Modal
             afterClose={() => {
@@ -142,40 +93,30 @@ const UserSettingsModal = NiceModal.create(() => {
             cancelLabel=''
             okLabel={okLabel}
             testId='user-settings-modal'
-            title='User profile settings'
+            title='Staff settings'
             width={540}
             onOk={handleSaveSettings}
         >
             <div className='flex flex-col gap-6 py-4'>
-                <p>
-                    Send an invitation for a new person to create a staff account on your site, and select a role that matches what you’d like them to be able to do.
-                </p>
-                <TextField
-                    error={!!errors.email}
-                    hint={errors.email}
-                    inputRef={focusRef}
-                    placeholder='jamie@example.com'
-                    title='Email address'
-                    value={email}
-                    onChange={(event) => {
-                        setEmail(event.target.value);
-                    }}
-                    onKeyDown={() => setErrors(e => ({...e, email: undefined}))}
-                />
-                <div>
-                    <Radio
-                        error={!!errors.role}
-                        hint={errors.role}
-                        id='role'
-                        options={allowedRoleOptions}
-                        selectedOption={role}
-                        separator={true}
-                        title="Role"
-                        onSelect={(value) => {
-                            setRole(value as RoleType);
-                        }}
-                    />
-                </div>
+                <h2>Social Links</h2>
+                {socialLinksQuery.data.fields.map((field: SocialLink) => {
+                    return (
+                        <>
+                            {field.icon && <img alt={field.name} src={field.icon.href} />}
+                            <p>Field Name: {field.name}</p>
+                            <p>Field Placeholder: {field.placeholder}</p>
+                        </>
+                    );
+                })}
+                <h2>Custom Fields</h2>
+                {customFieldsQuery.data.fields.map((field: CustomField) => {
+                    return (
+                        <>
+                            <p>Field Name: {field.name}</p>
+                            <p>Field Type: {field.type}</p>
+                        </>
+                    );
+                })}
             </div>
         </Modal>
     );
