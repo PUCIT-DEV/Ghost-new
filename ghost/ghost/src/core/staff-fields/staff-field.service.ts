@@ -18,7 +18,7 @@ export class StaffFieldService {
     }
 
     async createSocialLink(name: string, placeholder: string | null, actor?: Actor) {
-        const field = CustomField.create({name, placeholder}, actor);
+        const field = SocialLink.create({name, placeholder}, actor);
 
         await this.repository.save(field);
 

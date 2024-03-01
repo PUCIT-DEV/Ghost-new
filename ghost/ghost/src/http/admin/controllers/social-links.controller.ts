@@ -14,6 +14,7 @@ type CustomFieldDTO = {
     id: string;
     name: string;
     icon: string;
+    placeholder: string | null;
     created_at: Date;
     created_by: string;
 }
@@ -32,6 +33,7 @@ export class SocialLinksController {
             id: entity.id.toHexString(),
             name: entity.name,
             icon: entity.icon.href,
+            placeholder: entity.placeholder,
             created_at: entity.createdAt,
             created_by: entity.createdBy.id.toHexString()
         };
