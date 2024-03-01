@@ -7,8 +7,8 @@
 
 import {Body, Controller, Get, Post} from '@nestjs/common';
 import {Roles} from '../../../common/decorators/permissions.decorator';
-import {CustomFieldService} from '../../../core/staff-custom-fields/custom-field.service';
-import {CustomField} from '../../../core/staff-custom-fields/custom-field.entity';
+import {CustomFieldService} from '../../../core/staff-fields/custom-field.service';
+import {CustomField} from '../../../core/staff-fields/custom-field.entity';
 
 type CustomFieldDTO = {
     id: string;

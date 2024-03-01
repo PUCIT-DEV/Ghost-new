@@ -1,5 +1,5 @@
-import {CustomFieldRepository} from '../../core/staff-custom-fields/custom-field.repository';
-import {CustomField} from '../../core/staff-custom-fields/custom-field.entity';
+import {CustomFieldRepository} from '../../core/staff-fields/custom-field.repository';
+import {CustomField} from '../../core/staff-fields/custom-field.entity';
 
 export class CustomFieldRepositoryInMemory implements CustomFieldRepository {
     private fields: CustomField[];
