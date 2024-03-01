@@ -16,6 +16,8 @@ import siteFixture from './responses/site.json';
 import themesFixture from './responses/themes.json';
 import tiersFixture from './responses/tiers.json';
 import usersFixture from './responses/users.json';
+import customFieldsFixture from './responses/custom_fields.json';
+import socialLinksFixture from './responses/social_links.json';
 
 import {ActionsResponseType} from '../api/actions';
 import {ConfigResponseType} from '../api/config';
@@ -30,6 +32,8 @@ import {SettingsResponseType} from '../api/settings';
 import {ThemesResponseType} from '../api/themes';
 import {TiersResponseType} from '../api/tiers';
 import {UsersResponseType} from '../api/users';
+import {CustomFieldResponseType} from '../api/customFields';
+import {SocialLinkResponseType} from '../api/socialLinks';
 import {ExternalLink} from '../routing';
 
 interface MockRequestConfig {
@@ -62,7 +66,9 @@ export const responseFixtures = {
     themes: themesFixture as ThemesResponseType,
     newsletters: newslettersFixture as NewslettersResponseType,
     actions: actionsFixture as ActionsResponseType,
-    latestPost: {posts: [{id: '1', url: `${siteFixture.site.url}/test-post/`}]}
+    latestPost: {posts: [{id: '1', url: `${siteFixture.site.url}/test-post/`}]},
+    customFields: customFieldsFixture as CustomFieldResponseType,
+    socialLinks: socialLinksFixture as SocialLinkResponseType
 };
 
 const defaultLabFlags = {

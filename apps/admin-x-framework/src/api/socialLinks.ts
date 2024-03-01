@@ -3,34 +3,35 @@ import {Meta, createInfiniteQuery, createMutation} from '../utils/api/hooks';
 
 // Types
 
-export type CustomField = {
+export type SocialLink = {
     id: string;
     name: string;
-    type: 'url' | 'short' | 'long' | 'boolean';
+    icon: URL | null;
+    placeholder: string | null;
     enabled: boolean;
     created_at: string;
     updated_at: string;
 }
 
-export interface CustomFieldResponseType {
+export interface SocialLinkResponseType {
     meta?: Meta;
-    fields: CustomField[];
+    fields: SocialLink[];
 }
 
-export interface CustomFieldEditResponseType extends CustomFieldResponseType {
+export interface SocialLinkEditResponseType extends SocialLinkResponseType {
 }
 
-export interface CustomFieldDeleteResponseType {}
+export interface SocialLinkDeleteResponseType {}
 
 // Requests
 
-const dataType = 'CustomFieldResponseType';
+const dataType = 'SocialLinkResponseType';
 
-export const useBrowseCustomFields = createInfiniteQuery<CustomFieldResponseType>({
+export const useBrowseSocialLinks = createInfiniteQuery<SocialLinkResponseType>({
     dataType,
-    path: '/fields/custom/',
+    path: '/fields/social/',
     returnData: (originalData) => {
-        const {pages} = originalData as InfiniteData<CustomFieldResponseType>;
+        const {pages} = originalData as InfiniteData<SocialLinkResponseType>;
         let fields = pages.flatMap(page => page.fields);
 
         // Remove duplicates
@@ -45,18 +46,18 @@ export const useBrowseCustomFields = createInfiniteQuery<CustomFieldResponseType
     }
 });
 
-export const useDeleteCustomField = createMutation<CustomFieldDeleteResponseType, CustomField>({
+export const useDeleteSocialLink = createMutation<SocialLinkDeleteResponseType, SocialLink>({
     method: 'DELETE',
-    path: field => `/fields/custom/${field.id}/`,
+    path: field => `/fields/social/${field.id}/`,
 
     invalidateQueries: {
         dataType
     }
 });
 
-export const useEditCustomField = createMutation<CustomFieldEditResponseType, Partial<CustomField> & {id: string}>({
+export const useEditSocialLink = createMutation<SocialLinkEditResponseType, Partial<SocialLink> & {id: string}>({
     method: 'PUT',
-    path: field => `/fields/custom/${field.id}/`,
+    path: field => `/fields/social/${field.id}/`,
     body: field => ({fields: [field]}),
 
     invalidateQueries: {
@@ -64,9 +65,9 @@ export const useEditCustomField = createMutation<CustomFieldEditResponseType, Pa
     }
 });
 
-export const useAddCustomField = createMutation<CustomFieldResponseType, Partial<CustomField>>({
+export const useAddSocialLink = createMutation<SocialLinkResponseType, Partial<SocialLink>>({
     method: 'POST',
-    path: () => '/fields/custom/',
+    path: () => '/fields/social/',
     body: ({...field}) => ({fields: [field]}),
 
     invalidateQueries: {
