@@ -8,12 +8,12 @@
 import {Body, Controller, Get, Post} from '@nestjs/common';
 import {Roles} from '../../../common/decorators/permissions.decorator';
 import {StaffFieldService} from '../../../core/staff-fields/staff-field.service';
-import {CustomField} from '../../../core/staff-fields/custom-field.entity';
+import {SocialLink} from '../../../core/staff-fields/social-link.entity';
 
 type CustomFieldDTO = {
     id: string;
     name: string;
-    type: string;
+    icon: string;
     created_at: Date;
     created_by: string;
 }
@@ -23,15 +23,15 @@ type Response = {
     meta: any;
 };
 
-@Controller('fields/custom')
-export class CustomFieldsController {
+@Controller('fields/social')
+export class SocialLinksController {
     constructor(private readonly service: StaffFieldService) {}
 
-    toDTO(entity: CustomField) {
+    toDTO(entity: SocialLink): CustomFieldDTO {
         const dto = {
             id: entity.id.toHexString(),
             name: entity.name,
-            type: entity.type,
+            icon: entity.icon.href,
             created_at: entity.createdAt,
             created_by: entity.createdBy.id.toHexString()
         };
@@ -48,7 +48,7 @@ export class CustomFieldsController {
     ])
     @Get('')
     async browse(): Promise<Response> {
-        const fields = await this.service.getAllCustomFields();
+        const fields = await this.service.getAllSocialLinks();
 
         return {
             fields: fields.map(this.toDTO),
@@ -73,7 +73,7 @@ export class CustomFieldsController {
             throw new Error('Invalid input');
         }
         const data = body.fields[0];
-        const field = await this.service.createCustomField(data.name, data.type);
+        const field = await this.service.createSocialLink(data.name, data.placeholder);
         return {
             fields: [this.toDTO(field)],
             meta: {}

@@ -1,14 +1,19 @@
-import {CustomFieldRepository} from '../../core/staff-fields/custom-field.repository';
+import {StaffFieldRepository} from '../../core/staff-fields/staff-field.repository';
 import {CustomField} from '../../core/staff-fields/custom-field.entity';
+import {SocialLink} from '../../core/staff-fields/social-link.entity';
 
-export class CustomFieldRepositoryInMemory implements CustomFieldRepository {
-    private fields: CustomField[];
+export class CustomFieldRepositoryInMemory implements StaffFieldRepository {
+    private fields: (CustomField | SocialLink)[];
     constructor() {
         this.fields = [
             CustomField.create({
                 name: 'Awesome',
-                icon: null,
                 type: 'boolean'
+            }),
+            SocialLink.create({
+                name: 'Twitter',
+                placeholder: 'https://twitter.com/name',
+                icon: 'https://icon.com'
             })
         ];
     }

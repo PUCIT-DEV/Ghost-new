@@ -2,22 +2,23 @@ import {Module} from '@nestjs/common';
 import {ExampleController} from '../../http/admin/controllers/example.controller';
 import {ExampleService} from '../../core/example/example.service';
 import {ExampleRepositoryInMemory} from '../../db/in-memory/example.repository.in-memory';
-import {CustomFieldService} from '../../core/staff-fields/custom-field.service';
+import {StaffFieldService} from '../../core/staff-fields/staff-field.service';
 import {CustomFieldRepositoryInMemory} from '../../db/in-memory/custom-field.repository.in-memory';
 import {CustomFieldsController} from '../../http/admin/controllers/custom-fields.controller';
+import {SocialLinksController} from '../../http/admin/controllers/social-links.controller';
 
 @Module({
-    controllers: [ExampleController, CustomFieldsController],
-    exports: [ExampleService, CustomFieldService],
+    controllers: [ExampleController, CustomFieldsController, SocialLinksController],
+    exports: [ExampleService, StaffFieldService],
     providers: [
         ExampleService,
         {
             provide: 'ExampleRepository',
             useClass: ExampleRepositoryInMemory
         },
-        CustomFieldService,
+        StaffFieldService,
         {
-            provide: 'CustomFieldRepository',
+            provide: 'StaffFieldRepository',
             useClass: CustomFieldRepositoryInMemory
         }
     ]
