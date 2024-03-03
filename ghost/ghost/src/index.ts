@@ -4,12 +4,21 @@ import {NestApplication, NestFactory} from '@nestjs/core';
 import {registerEvents} from './common/decorators/handle-event.decorator';
 import {ClassProvider, ValueProvider} from '@nestjs/common';
 
-let app;
+let app: any;
 
 export async function create() {
     app = await NestFactory.create(AppModule);
     const DomainEvents = await app.resolve('DomainEvents');
     registerEvents(app as NestApplication, DomainEvents);
+    return app;
+}
+
+export async function getApp() {
+    if (app) {
+        return app;
+    }
+    app = await create();
+    await app.init();
     return app;
 }
 

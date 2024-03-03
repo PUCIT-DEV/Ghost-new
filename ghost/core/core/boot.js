@@ -571,6 +571,9 @@ async function bootGhost({backend = true, frontend = true, server = true} = {}) 
         // Step 7 - Init our background services, we don't wait for this to finish
         initBackgroundServices({config});
 
+        const GhostNestApp = require('@tryghost/ghost');
+        await GhostNestApp.getApp();
+
         // If we pass the env var, kill Ghost
         if (process.env.GHOST_CI_SHUTDOWN_AFTER_BOOT) {
             process.exit(0);

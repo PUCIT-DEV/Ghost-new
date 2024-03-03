@@ -35,22 +35,11 @@ module.exports = function setupApiApp() {
     // Routing
     apiApp.use(routes());
 
-    let nestAppPromise = null;
-    function getNestAppPromise() {
-        if (!nestAppPromise) {
-            nestAppPromise = GhostNestApp.create().then(async (app) => {
-                await app.init();
-                return app;
-            });
-        }
-        return nestAppPromise;
-    }
-
     apiApp.use(async (req, res, next) => {
         if (!labs.isSet('NestPlayground')) {
             return next();
         }
-        const app = await getNestAppPromise();
+        const app = await GhostNestApp.getApp();
         app.getHttpAdapter().getInstance()(req, res, next);
     });
 
