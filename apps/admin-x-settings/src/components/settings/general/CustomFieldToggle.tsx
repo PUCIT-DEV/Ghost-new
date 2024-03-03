@@ -3,10 +3,10 @@ import {Icon} from '@tryghost/admin-x-design-system';
 import {withErrorBoundary} from '@tryghost/admin-x-design-system';
 
 const CustomFieldToggle: React.FC<{
-    icon?: URL,
+    icon?: URL | null,
     name: string,
     type?: 'url' | 'short' | 'long' | 'boolean',
-    placeholder?: string,
+    placeholder?: string | null,
     enabled: boolean
 }> = ({
     icon,
@@ -19,29 +19,29 @@ const CustomFieldToggle: React.FC<{
     if (!icon) {
         switch (type) {
         case 'long':
-            iconComponent = <Icon className='absolute left-3 top-3 z-10' colorClass='text-grey-500' name='hyperlink-circle' size='sm' />;
+            iconComponent = <Icon className='bg-grey-150 p-4' colorClass='text-black' name='hyperlink-circle' size='sm' />;
             break;
         case 'short':
-            iconComponent = <Icon className='absolute left-3 top-3 z-10' colorClass='text-grey-500' name='hyperlink-circle' size='sm' />;
+            iconComponent = <Icon className='bg-grey-150 p-4' colorClass='text-black' name='hyperlink-circle' size='sm' />;
             break;
         case 'url':
-            iconComponent = <Icon className='absolute left-3 top-3 z-10' colorClass='text-grey-500' name='hyperlink-circle' size='sm' />;
+            iconComponent = <Icon className='bg-grey-150 p-4' colorClass='text-black' name='hyperlink-circle' size='sm' />;
             break;
         case 'boolean':
-            iconComponent = <Icon className='absolute left-3 top-3 z-10' colorClass='text-grey-500' name='hyperlink-circle' size='sm' />;
+            iconComponent = <Icon className='bg-grey-150 p-4' colorClass='text-black' name='hyperlink-circle' size='sm' />;
             break;
         default:
             break;
         }
     } else {
-        iconComponent = <img className='absolute left-3 top-3 z-10' src={icon.href} />;
+        iconComponent = <img className='bg-grey-150 p-4' src={icon.href} />;
     }
 
     return (
-        <div className='flex justify-between border-y-grey-250'>
+        <div className='align-center flex justify-between border-y-grey-250'>
             <div className='flex'>
                 {iconComponent}
-                <div className='wrap flex'>
+                <div className='flex flex-col'>
                     <strong>{name}</strong>
                     <p>{type}</p>
                 </div>

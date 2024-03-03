@@ -93,11 +93,24 @@ const UserSettingsModal = NiceModal.create(() => {
 
                 <h3>Social Links</h3>
                 {socialLinksQuery.data.fields.map((field: SocialLink) => {
-                    return <CustomFieldToggle enabled={field.enabled} icon={field.icon} name={field.name} placeholder={field.placeholder} />;
+                    return (
+                        <CustomFieldToggle
+                            enabled={field.enabled}
+                            icon={field?.icon}
+                            name={field.name}
+                            placeholder={field?.placeholder}
+                        />
+                    );
                 })}
                 <h3>Custom Fields</h3>
                 {customFieldsQuery.data.fields.map((field: CustomField) => {
-                    return <CustomFieldToggle enabled={field.enabled} name={field.name} type={field.type} />;
+                    return (
+                        <CustomFieldToggle
+                            enabled={field.enabled}
+                            name={field.name}
+                            type={field.type}
+                        />
+                    );
                 })}
             </div>
         </Modal>
