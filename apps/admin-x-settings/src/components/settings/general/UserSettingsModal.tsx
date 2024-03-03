@@ -1,7 +1,7 @@
 import CustomFieldToggle from './CustomFieldToggle';
 import NiceModal from '@ebay/nice-modal-react';
 import {CustomField} from '@tryghost/admin-x-framework/api/customFields';
-import {Modal, showToast} from '@tryghost/admin-x-design-system';
+import {Icon, Modal, showToast} from '@tryghost/admin-x-design-system';
 import {SocialLink} from '@tryghost/admin-x-framework/api/socialLinks';
 import {useBrowseCustomFields} from '@tryghost/admin-x-framework/api/customFields';
 import {useBrowseSocialLinks} from '@tryghost/admin-x-framework/api/socialLinks';
@@ -138,6 +138,17 @@ const UserSettingsModal = NiceModal.create(() => {
                         />
                     );
                 })}
+
+                <div className='flex items-center'>
+                    <div className='mr-1 flex min-h-11 min-w-11 items-center justify-center rounded bg-grey-150'>
+                        <Icon colorClass='text-black' name='hyperlink-circle' size='sm' />
+                    </div>
+                    <div className='flex min-h-11 w-full items-center justify-between rounded bg-grey-150 px-1'>
+                        <p>Add new social network field</p>
+                        <p className='text-md font-bold' onClick={() => {}}>+</p>
+                    </div>
+                </div>
+
             </div>
             <div className='flex flex-col py-4'>
                 <h3 className='pb-4'>Custom Fields</h3>
@@ -151,6 +162,16 @@ const UserSettingsModal = NiceModal.create(() => {
                         />
                     );
                 })}
+
+                <div className='flex items-center'>
+                    <div className='mr-1 flex min-h-11 min-w-11 items-center justify-center rounded bg-grey-150'>
+                        <p className='black font-semibold'>Aa</p>
+                    </div>
+                    <div className='flex min-h-11 w-full items-center justify-between rounded bg-grey-150 px-1'>
+                        <p>Add new profile field</p>
+                        <p className='text-md font-bold' onClick={() => {}}>+</p>
+                    </div>
+                </div>
             </div>
         </Modal>
     );
