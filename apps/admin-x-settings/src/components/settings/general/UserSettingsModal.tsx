@@ -89,8 +89,41 @@ const UserSettingsModal = NiceModal.create(() => {
             width={540}
             onCancel={handleSaveSettings}
         >
-            <div className='flex flex-col gap-6 py-4'>
+            <div className='flex flex-col py-4'>
+                <CustomFieldToggle
+                    enabled={true}
+                    name="Full name"
+                    type="short"
+                    toggleDisabled
+                />
 
+                <CustomFieldToggle
+                    enabled={true}
+                    name="Username"
+                    type="short"
+                    toggleDisabled
+                />
+
+                <CustomFieldToggle
+                    enabled={true}
+                    name="Email address"
+                    type="short"
+                    toggleDisabled
+                />
+
+                <CustomFieldToggle
+                    enabled={true}
+                    name="Title"
+                    type="short"
+                />
+
+                <CustomFieldToggle
+                    enabled={true}
+                    name="Bio"
+                    type="long"
+                />
+            </div>
+            <div className='flex flex-col py-4'>
                 <h3>Social Links</h3>
                 {socialLinksQuery.data.fields.map((field: SocialLink) => {
                     return (
@@ -103,6 +136,8 @@ const UserSettingsModal = NiceModal.create(() => {
                         />
                     );
                 })}
+            </div>
+            <div className='flex flex-col py-4'>
                 <h3>Custom Fields</h3>
                 {customFieldsQuery.data.fields.map((field: CustomField) => {
                     return (
