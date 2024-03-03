@@ -73,6 +73,9 @@ function shouldInvalidateCacheAfterChange(model) {
     return false;
 }
 
+const GhostNestApp = require('@tryghost/ghost');
+const labs = require('../../../shared/labs');
+
 module.exports = {
     docName: 'users',
 
@@ -97,8 +100,23 @@ module.exports = {
             }
         },
         permissions: true,
-        query(frame) {
-            return models.User.findPage(frame.options);
+        async query(frame) {
+            const page = await models.User.findPage(frame.options);
+
+            if (labs.isSet('NestPlayground')) {
+                const service = await GhostNestApp.resolve('StaffFieldService');
+                page.data = await Promise.all(page.data.map(async (model) => {
+                    const json = model.toJSON();
+
+                    const staffFields = await service.getStaffFields(model.id);
+
+                    json.staffFields = staffFields;
+
+                    return json;
+                }));
+            }
+
+            return page;
         }
     },
 
@@ -126,17 +144,25 @@ module.exports = {
             }
         },
         permissions: true,
-        query(frame) {
-            return models.User.findOne(frame.data, frame.options)
-                .then((model) => {
-                    if (!model) {
-                        return Promise.reject(new errors.NotFoundError({
-                            message: tpl(messages.userNotFound)
-                        }));
-                    }
+        async query(frame) {
+            const model = await models.User.findOne(frame.data, frame.options);
+            if (!model) {
+                return Promise.reject(new errors.NotFoundError({
+                    message: tpl(messages.userNotFound)
+                }));
+            }
 
-                    return model;
-                });
+            const json = model.toJSON();
+
+            if (labs.isSet('NestPlayground')) {
+                const service = await GhostNestApp.resolve('StaffFieldService');
+
+                const staffFields = await service.getStaffFields(model.id);
+
+                json.staffFields = staffFields;
+            }
+
+            return json;
         }
     },
 
