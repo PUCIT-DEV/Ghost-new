@@ -187,21 +187,20 @@ module.exports = {
         permissions: {
             unsafeAttrs: UNSAFE_ATTRS
         },
-        query(frame) {
-            return models.User.edit(frame.data.users[0], frame.options)
-                .then((model) => {
-                    if (!model) {
-                        return Promise.reject(new errors.NotFoundError({
-                            message: tpl(messages.userNotFound)
-                        }));
-                    }
+        async query(frame) {
+            const userData = frame.data.users[0];
+            const model = await models.User.edit(userData, frame.options);
+            if (!model) {
+                return Promise.reject(new errors.NotFoundError({
+                    message: tpl(messages.userNotFound)
+                }));
+            }
 
-                    if (shouldInvalidateCacheAfterChange(model)) {
-                        frame.setHeader('X-Cache-Invalidate', '/*');
-                    }
+            if (shouldInvalidateCacheAfterChange(model)) {
+                frame.setHeader('X-Cache-Invalidate', '/*');
+            }
 
-                    return model;
-                });
+            return model;
         }
     },
 
