@@ -19,6 +19,10 @@ import {StaffFieldRepositoryInMemory} from '../../db/in-memory/staff-field.repos
         },
         StaffFieldService,
         {
+            provide: 'StaffFieldService',
+            useClass: StaffFieldService
+        },
+        {
             provide: 'StaffFieldRepository',
             useClass: StaffFieldRepositoryInMemory
         },
