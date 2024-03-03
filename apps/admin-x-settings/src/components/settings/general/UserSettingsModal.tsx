@@ -1,3 +1,4 @@
+import CustomFieldToggle from './CustomFieldToggle';
 import NiceModal from '@ebay/nice-modal-react';
 import {CustomField} from '@tryghost/admin-x-framework/api/customFields';
 import {Modal, showToast} from '@tryghost/admin-x-design-system';
@@ -46,15 +47,6 @@ const UserSettingsModal = NiceModal.create(() => {
         return null;
     }
 
-    let okLabel = 'Save';
-    if (saveState === 'saving') {
-        okLabel = 'Sending...';
-    } else if (saveState === 'saved') {
-        okLabel = 'Saved';
-    } else if (saveState === 'error') {
-        okLabel = 'Retry';
-    }
-
     const handleSaveSettings = async () => {
         if (saveState === 'saving') {
             return;
@@ -91,31 +83,21 @@ const UserSettingsModal = NiceModal.create(() => {
                 updateRoute('staff');
             }}
             cancelLabel=''
-            okLabel={okLabel}
+            okLabel=''
             testId='user-settings-modal'
             title='Staff settings'
             width={540}
-            onOk={handleSaveSettings}
+            onCancel={handleSaveSettings}
         >
             <div className='flex flex-col gap-6 py-4'>
-                <h2>Social Links</h2>
+
+                <h3>Social Links</h3>
                 {socialLinksQuery.data.fields.map((field: SocialLink) => {
-                    return (
-                        <>
-                            {field.icon && <img alt={field.name} src={field.icon.href} />}
-                            <p>Field Name: {field.name}</p>
-                            <p>Field Placeholder: {field.placeholder}</p>
-                        </>
-                    );
+                    return <CustomFieldToggle enabled={field.enabled} icon={field.icon} name={field.name} placeholder={field.placeholder} />;
                 })}
-                <h2>Custom Fields</h2>
+                <h3>Custom Fields</h3>
                 {customFieldsQuery.data.fields.map((field: CustomField) => {
-                    return (
-                        <>
-                            <p>Field Name: {field.name}</p>
-                            <p>Field Type: {field.type}</p>
-                        </>
-                    );
+                    return <CustomFieldToggle enabled={field.enabled} name={field.name} type={field.type} />;
                 })}
             </div>
         </Modal>
