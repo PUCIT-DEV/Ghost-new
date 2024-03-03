@@ -99,6 +99,7 @@ const UserSettingsModal = NiceModal.create(() => {
                             icon={field?.icon}
                             name={field.name}
                             placeholder={field?.placeholder}
+                            type="url"
                         />
                     );
                 })}
