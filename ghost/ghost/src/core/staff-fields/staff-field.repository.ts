@@ -1,7 +1,7 @@
-import {CustomField} from './custom-field.entity';
-import {SocialLink} from './social-link.entity';
+import ObjectID from 'bson-objectid';
+import {StaffField} from './staff-field.entity';
 
 export interface StaffFieldRepository {
-    getAll(): Promise<(CustomField | SocialLink)[]>;
-    save(entity: CustomField | SocialLink): Promise<void>;
+    getById(staffId: ObjectID): Promise<StaffField[]>;
+    save(entity: StaffField): Promise<void>;
 }

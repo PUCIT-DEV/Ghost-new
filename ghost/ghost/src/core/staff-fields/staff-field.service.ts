@@ -1,12 +1,16 @@
 import {Inject} from '@nestjs/common';
 import {StaffFieldRepository} from './staff-field.repository';
+import {FieldRepository} from './field.repository';
 import {CustomField} from './custom-field.entity';
 import {Actor} from '../../common/types/actor.type';
 import {SocialLink} from './social-link.entity';
+import {StaffField} from './staff-field.entity';
+import ObjectID from 'bson-objectid';
 
 export class StaffFieldService {
     constructor(
-        @Inject('StaffFieldRepository') private repository: StaffFieldRepository
+        @Inject('FieldRepository') private repository: FieldRepository,
+        @Inject('StaffFieldRepository') private staffFieldRepository: StaffFieldRepository
     ) {}
 
     async createCustomField(name: string, type: string, actor?: Actor) {
@@ -23,6 +27,25 @@ export class StaffFieldService {
         await this.repository.save(field);
 
         return field;
+    }
+
+    async getStaffFields(staffId: ObjectID): Promise<StaffField[]> {
+        const fields = await this.staffFieldRepository.getById(staffId);
+        return fields;
+    }
+
+    async createStaffField(staffId: ObjectID, fieldId: ObjectID, value: any): Promise<StaffField> {
+        const field = await this.repository.getById(fieldId);
+
+        const staffField = StaffField.create({
+            staffId,
+            field,
+            value
+        });
+
+        await this.staffFieldRepository.save(staffField);
+
+        return staffField;
     }
 
     async getAll() {

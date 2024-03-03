@@ -20,6 +20,20 @@ export class SocialLink extends Entity<SocialLinkData> {
         return this.attr.placeholder;
     }
 
+    validate(value: unknown) {
+        if (value === null) {
+            return value;
+        }
+        if (typeof value === 'string') {
+            return new URL(value);
+        }
+        if (value instanceof URL) {
+            return value;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        throw new Error('Validation failed for SocialLink value', value as any);
+    }
+
     static create(data: unknown, actor?: Actor) {
         if (typeof data !== 'object' || data === null) {
             throw new Error('Invalid data');

@@ -15,6 +15,40 @@ export class CustomField extends Entity<CustomFieldData> {
         return this.attr.type;
     }
 
+    validate(value: unknown) {
+        if (value === null) {
+            return value;
+        }
+        if (this.type === 'boolean') {
+            if (typeof value === 'boolean') {
+                return value;
+            }
+            throw new Error(`Validation failed for CustomField(${this.type}) value ${value}`);
+        }
+        if (this.type === 'url') {
+            if (typeof value === 'string') {
+                return new URL(value);
+            }
+            if (value instanceof URL) {
+                return value;
+            }
+            throw new Error(`Validation failed for CustomField(${this.type}) value ${value}`);
+        }
+        if (typeof value !== 'string') {
+            throw new Error(`Validation failed for CustomField(${this.type}) value ${value}`);
+        }
+        if (this.type === 'long') {
+            if (value.length > 10000) {
+                throw new Error(`Validation failed for CustomField(${this.type}) value ${value}`);
+            }
+        } else if (this.type === 'short') {
+            if (value.length > 256) {
+                throw new Error(`Validation failed for CustomField(${this.type}) value ${value}`);
+            }
+        }
+        return value;
+    }
+
     static create(data: unknown, actor?: Actor) {
         if (typeof data !== 'object' || data === null) {
             throw new Error('Invalid data');
