@@ -42,19 +42,21 @@ const CustomFieldToggle: React.FC<{
     type: 'url' | 'short' | 'long' | 'boolean',
     placeholder?: string | null,
     enabled: boolean,
-    toggleDisabled?: boolean
+    toggleDisabled?: boolean,
+    isFirst?: boolean
 }> = ({
     icon,
     name,
     type,
     enabled,
-    toggleDisabled = false
+    toggleDisabled = false,
+    isFirst = false
 }) => {
     let iconComponent = getIconComponent(type, icon);
     let typeNameFriendly = getFriendlyTypeName(type);
 
     return (
-        <div className='flex items-center justify-between border border-x-transparent border-y-grey-250 py-2'>
+        <div className={`flex items-center justify-between border border-x-transparent border-b-grey-250 py-2 ${isFirst ? 'border-t-grey-250' : ' border-t-transparent'}`}>
             <div className='flex'>
                 <div className='mr-2 flex h-11 w-11 items-center justify-center rounded bg-grey-150'>
                     {iconComponent}

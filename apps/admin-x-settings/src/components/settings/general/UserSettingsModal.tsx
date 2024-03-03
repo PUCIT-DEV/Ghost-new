@@ -92,6 +92,7 @@ const UserSettingsModal = NiceModal.create(() => {
             <div className='flex flex-col py-4'>
                 <CustomFieldToggle
                     enabled={true}
+                    isFirst={true}
                     name="Full name"
                     type="short"
                     toggleDisabled
@@ -125,11 +126,12 @@ const UserSettingsModal = NiceModal.create(() => {
             </div>
             <div className='flex flex-col py-4'>
                 <h3 className='pb-4'>Social Links</h3>
-                {socialLinksQuery.data.fields.map((field: SocialLink) => {
+                {socialLinksQuery.data.fields.map((field: SocialLink, i: number) => {
                     return (
                         <CustomFieldToggle
                             enabled={field.enabled}
                             icon={field?.icon}
+                            isFirst={i === 0}
                             name={field.name}
                             placeholder={field?.placeholder}
                             type="url"
@@ -139,10 +141,11 @@ const UserSettingsModal = NiceModal.create(() => {
             </div>
             <div className='flex flex-col py-4'>
                 <h3 className='pb-4'>Custom Fields</h3>
-                {customFieldsQuery.data.fields.map((field: CustomField) => {
+                {customFieldsQuery.data.fields.map((field: CustomField, i: number) => {
                     return (
                         <CustomFieldToggle
                             enabled={field.enabled}
+                            isFirst={i === 0}
                             name={field.name}
                             type={field.type}
                         />
