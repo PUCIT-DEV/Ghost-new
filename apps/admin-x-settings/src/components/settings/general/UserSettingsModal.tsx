@@ -124,7 +124,7 @@ const UserSettingsModal = NiceModal.create(() => {
                 />
             </div>
             <div className='flex flex-col py-4'>
-                <h3>Social Links</h3>
+                <h3 className='pb-4'>Social Links</h3>
                 {socialLinksQuery.data.fields.map((field: SocialLink) => {
                     return (
                         <CustomFieldToggle
@@ -138,7 +138,7 @@ const UserSettingsModal = NiceModal.create(() => {
                 })}
             </div>
             <div className='flex flex-col py-4'>
-                <h3>Custom Fields</h3>
+                <h3 className='pb-4'>Custom Fields</h3>
                 {customFieldsQuery.data.fields.map((field: CustomField) => {
                     return (
                         <CustomFieldToggle

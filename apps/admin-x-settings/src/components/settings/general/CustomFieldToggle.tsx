@@ -6,16 +6,12 @@ const getFriendlyTypeName = (type: 'url' | 'short' | 'long' | 'boolean') => {
     switch (type) {
     case 'long':
         return 'Long Text';
-        break;
     case 'short':
         return 'Short Text';
-        break;
     case 'url':
         return 'Link';
-        break;
     case 'boolean':
         return 'Checkbox';
-        break;
     default:
         break;
     }
@@ -25,17 +21,13 @@ const getIconComponent = (type: 'url' | 'short' | 'long' | 'boolean', icon?: URL
     if (!icon || !icon?.href) {
         switch (type) {
         case 'long':
-            return <Icon colorClass='text-black' name='long-text' size='sm' />;
-            break;
+            return <p className='black font-semibold'>Aa</p>;
         case 'short':
             return <Icon colorClass='text-black' name='long-text' size='sm' />;
-            break;
         case 'url':
             return <Icon colorClass='text-black' name='hyperlink-circle' size='sm' />;
-            break;
         case 'boolean':
             return <Icon colorClass='text-black' name='long-text' size='sm' />;
-            break;
         default:
             break;
         }
@@ -73,7 +65,13 @@ const CustomFieldToggle: React.FC<{
                 </div>
             </div>
             <div>
-                <Toggle checked={enabled} disabled={toggleDisabled} />
+                <Toggle
+                    checked={enabled}
+                    disabled={toggleDisabled}
+                    onChange={() => {
+                        alert('toggle changed');
+                    }}
+                />
             </div>
         </div>
     );
