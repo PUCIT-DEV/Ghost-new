@@ -75,7 +75,7 @@ export class SocialLinksController {
             throw new Error('Invalid input');
         }
         const data = body.fields[0];
-        const field = await this.service.createSocialLink(data.name, data.placeholder);
+        const field = await this.service.createSocialLink(data.name, data.placeholder, data.icon);
         return {
             fields: [this.toDTO(field)],
             meta: {}
