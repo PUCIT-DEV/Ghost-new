@@ -85,12 +85,16 @@ async function writeStaffFields(model, userData) {
     const service = await GhostNestApp.resolve('StaffFieldService');
 
     const allStaffFields = (userData.social_links || []).concat(userData.custom_fields || []);
+    const usersStaffFields = await service.getStaffFields(userData.id);
 
     for (const staffField of allStaffFields) {
         if (!staffField.id) {
             await service.createStaffField(model.id.toString(), staffField.field.id, staffField.value);
         } else {
-            // Handle editing
+            const existing = usersStaffFields.find(usersStaffField => usersStaffField.id.equals(staffField.id));
+            if (existing) {
+                await service.updateStaffField(existing, staffField.value);
+            }
         }
     }
 }
