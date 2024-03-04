@@ -22,6 +22,11 @@ export class StaffField extends Entity<StaffFieldData> {
         return this.attr.value;
     }
 
+    set value(value: any) {
+        this.field.validate(value);
+        this.set('value', value);
+    }
+
     static create(data: unknown) {
         if (typeof data !== 'object' || data === null) {
             throw new Error('Invalid data');

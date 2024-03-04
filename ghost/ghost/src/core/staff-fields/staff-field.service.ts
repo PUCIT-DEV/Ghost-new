@@ -48,6 +48,12 @@ export class StaffFieldService {
         return staffField;
     }
 
+    async updateStaffField(staffField: StaffField, value: any): Promise<StaffField> {
+        staffField.value = value;
+        await this.staffFieldRepository.save(staffField);
+        return staffField;
+    }
+
     async getAll() {
         return await this.repository.getAll();
     }
