@@ -73,6 +73,51 @@ function shouldInvalidateCacheAfterChange(model) {
     return false;
 }
 
+async function attachFields(json) {
+    const service = await GhostNestApp.resolve('StaffFieldService');
+    const socialLinks = await service.getAllSocialLinks();
+    const customFields = await service.getAllCustomFields();
+
+    const staffFields = (await service.getStaffFields(json.id)).reduce((staffFields, field) => {
+        return {
+            ...staffFields,
+            [field.field.id]: field
+        };
+    }, {});
+
+    json.social_links = socialLinks.map((socialLink) => {
+        const staffField = staffFields[socialLink.id];
+        if (!staffField) {
+            return null;
+        }
+        return {
+            id: staffField.field.id,
+            field: {
+                id: staffField.field.id,
+                name: staffField.field.name
+            },
+            value: staffField.value
+        };
+    }).filter(x => x !== null);
+
+    json.custom_fields = customFields.map((customField) => {
+        const staffField = staffFields[customField.id];
+        if (!staffField) {
+            return null;
+        }
+        return {
+            id: staffField.field.id,
+            field: {
+                id: staffField.field.id,
+                name: staffField.field.name
+            },
+            value: staffField.value
+        };
+    }).filter(x => x !== null);
+
+    return json;
+}
+
 const GhostNestApp = require('@tryghost/ghost');
 const labs = require('../../../shared/labs');
 
@@ -104,14 +149,9 @@ module.exports = {
             const page = await models.User.findPage(frame.options);
 
             if (labs.isSet('NestPlayground')) {
-                const service = await GhostNestApp.resolve('StaffFieldService');
                 page.data = await Promise.all(page.data.map(async (model) => {
                     const json = model.toJSON();
-
-                    const staffFields = await service.getStaffFields(model.id);
-
-                    json.staffFields = staffFields;
-
+                    await attachFields(json);
                     return json;
                 }));
             }
@@ -155,11 +195,7 @@ module.exports = {
             const json = model.toJSON();
 
             if (labs.isSet('NestPlayground')) {
-                const service = await GhostNestApp.resolve('StaffFieldService');
-
-                const staffFields = await service.getStaffFields(model.id);
-
-                json.staffFields = staffFields;
+                await attachFields(json);
             }
 
             return json;
