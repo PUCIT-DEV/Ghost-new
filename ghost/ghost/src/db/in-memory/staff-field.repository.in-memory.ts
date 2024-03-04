@@ -1,4 +1,3 @@
-import ObjectID from 'bson-objectid';
 import {StaffFieldRepository} from '../../core/staff-fields/staff-field.repository';
 import {StaffField} from '../../core/staff-fields/staff-field.entity';
 
@@ -8,8 +7,8 @@ export class StaffFieldRepositoryInMemory implements StaffFieldRepository {
         this.fields = [];
     }
 
-    async getById(id: ObjectID): Promise<StaffField[]> {
-        return this.fields.filter(field => field.staffId.equals(id)) || [];
+    async getById(id: string): Promise<StaffField[]> {
+        return this.fields.filter(field => field.staffId === id) || [];
     }
 
     async save(entity: StaffField) {

@@ -4,7 +4,7 @@ import {CustomField} from './custom-field.entity';
 import {SocialLink} from './social-link.entity';
 
 type StaffFieldData = {
-    staffId: ObjectID;
+    staffId: string;
     field: SocialLink | CustomField;
     value: URL | string | boolean | null;
 };
@@ -37,8 +37,9 @@ export class StaffField extends Entity<StaffFieldData> {
 
         const value = field.validate(inputValue) as URL | string | boolean | null;
 
-        let staffId = 'staffId' in data ? data.staffId : null;
+        const staffId = ('staffId' in data ? data.staffId : null) as string;
 
+        /**
         if (typeof staffId === 'string') {
             staffId = ObjectID.createFromHexString(staffId);
         }
@@ -46,6 +47,7 @@ export class StaffField extends Entity<StaffFieldData> {
         if (!(staffId instanceof ObjectID)) {
             throw new Error('StaffField staff id must be a valid id');
         }
+        */
 
         return new StaffField({
             staffId,

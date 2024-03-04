@@ -29,12 +29,12 @@ export class StaffFieldService {
         return field;
     }
 
-    async getStaffFields(staffId: ObjectID): Promise<StaffField[]> {
+    async getStaffFields(staffId: string): Promise<StaffField[]> {
         const fields = await this.staffFieldRepository.getById(staffId);
         return fields;
     }
 
-    async createStaffField(staffId: ObjectID, fieldId: ObjectID, value: any): Promise<StaffField> {
+    async createStaffField(staffId: string, fieldId: ObjectID, value: any): Promise<StaffField> {
         const field = await this.repository.getById(fieldId);
 
         const staffField = StaffField.create({
