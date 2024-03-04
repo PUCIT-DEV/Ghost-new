@@ -73,6 +73,28 @@ function shouldInvalidateCacheAfterChange(model) {
     return false;
 }
 
+async function writeStaffFields(model, userData) {
+    if (!labs.isSet('NestPlayground')) {
+        return;
+    }
+
+    if (!userData.social_links && !userData.custom_fields) {
+        return;
+    }
+
+    const service = await GhostNestApp.resolve('StaffFieldService');
+
+    const allStaffFields = (userData.social_links || []).concat(userData.custom_fields || []);
+
+    for (const staffField of allStaffFields) {
+        if (!staffField.id) {
+            await service.createStaffField(model.id.toString(), staffField.field.id, staffField.value);
+        } else {
+            // Handle editing
+        }
+    }
+}
+
 async function attachFields(json) {
     const service = await GhostNestApp.resolve('StaffFieldService');
     const socialLinks = await service.getAllSocialLinks();
@@ -231,6 +253,8 @@ module.exports = {
                     message: tpl(messages.userNotFound)
                 }));
             }
+
+            await writeStaffFields(model, userData);
 
             if (shouldInvalidateCacheAfterChange(model)) {
                 frame.setHeader('X-Cache-Invalidate', '/*');
