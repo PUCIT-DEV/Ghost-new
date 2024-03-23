@@ -7,9 +7,12 @@ import {CustomFieldRepositoryInMemory} from '../../db/in-memory/field.repository
 import {CustomFieldsController} from '../../http/admin/controllers/custom-fields.controller';
 import {SocialLinksController} from '../../http/admin/controllers/social-links.controller';
 import {StaffFieldRepositoryInMemory} from '../../db/in-memory/staff-field.repository.in-memory';
+import {SiteSocialLinkRepositoryInMemory} from '../../db/in-memory/site-social-links.repository.in-memory';
+import {SiteSocialLinksService} from '../../core/site-social-links/site-social-links.service';
+import {SiteSocialLinksController} from '../../http/admin/controllers/site-social-links.controller';
 
 @Module({
-    controllers: [ExampleController, CustomFieldsController, SocialLinksController],
+    controllers: [ExampleController, CustomFieldsController, SocialLinksController, SiteSocialLinksController],
     exports: [ExampleService, StaffFieldService],
     providers: [
         ExampleService,
@@ -29,7 +32,17 @@ import {StaffFieldRepositoryInMemory} from '../../db/in-memory/staff-field.repos
         {
             provide: 'FieldRepository',
             useClass: CustomFieldRepositoryInMemory
+        },
+        {
+            provide: 'SiteSocialLinkRepository',
+            useClass: SiteSocialLinkRepositoryInMemory
+        },
+        SiteSocialLinksService,
+        {
+            provide: 'SiteSocialLinksService',
+            useClass: SiteSocialLinksService
         }
     ]
 })
+
 export class AdminAPIModule {}
