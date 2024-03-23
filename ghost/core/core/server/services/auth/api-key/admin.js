@@ -171,16 +171,11 @@ const authenticateWithToken = async function apiKeyAuthenticateWithToken(origina
     try {
         jwt.verify(token, secret, options);
     } catch (err) {
-        if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
-            throw new errors.UnauthorizedError({
-                message: tpl(messages.invalidTokenWithMessage, {message: err.message}),
-                code: 'INVALID_JWT',
-                err
-            });
-        }
-
-        // unknown error
-        throw new errors.InternalServerError({err});
+        throw new errors.UnauthorizedError({
+            message: tpl(messages.invalidTokenWithMessage, {message: err.message}),
+            code: 'INVALID_JWT',
+            err
+        });
     }
 
     // authenticated OK
