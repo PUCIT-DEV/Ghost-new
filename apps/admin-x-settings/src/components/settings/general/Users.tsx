@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import TopLevelGroup from '../../TopLevelGroup';
 import clsx from 'clsx';
 import useStaffUsers from '../../../hooks/useStaffUsers';
-import {Avatar, Button, List, ListItem, NoValueLabel, TabView, showToast, withErrorBoundary} from '@tryghost/admin-x-design-system';
+import {Avatar, Button, Icon, List, ListItem, NoValueLabel, TabView, showToast, withErrorBoundary} from '@tryghost/admin-x-design-system';
 import {User, hasAdminAccess, isContributorUser, isEditorUser} from '@tryghost/admin-x-framework/api/users';
 import {UserInvite, useAddInvite, useDeleteInvite} from '@tryghost/admin-x-framework/api/invites';
 import {generateAvatarColor, getInitials} from '../../../utils/helpers';
@@ -44,8 +44,8 @@ const Owner: React.FC<OwnerProps> = ({user}) => {
         <div className={clsx('group flex gap-3', hasAdminAccess(currentUser) && 'cursor-pointer')} data-testid='owner-user' onClick={showDetailModal}>
             <Avatar bgColor={generateAvatarColor((user.name ? user.name : user.email))} image={user.profile_image ?? undefined} label={getInitials(user.name)} labelColor='white' size='lg' />
             <div className='flex flex-col'>
-                <span>{user.name} &mdash; <strong>Owner</strong> {hasAdminAccess(currentUser) && <button className='text-green ml-2 inline-block text-sm font-bold group-hover:visible md:invisible' type='button'>View profile</button>}</span>
-                <span className='text-grey-700 text-xs'>{user.email}</span>
+                <span>{user.name} &mdash; <strong>Owner</strong> {hasAdminAccess(currentUser) && <button className='ml-2 inline-block text-sm font-bold text-green group-hover:visible md:invisible' type='button'>View profile</button>}</span>
+                <span className='text-xs text-grey-700'>{user.email}</span>
             </div>
         </div>
     );
@@ -266,9 +266,17 @@ const Users: React.FC<{ keywords: string[], highlight?: boolean }> = ({keywords,
             testId='users'
             title='Staff'
         >
-            <Button color='grey' label='Edit Settings' link={true} linkWithPadding onClick={() => {
-                showUserSettingsModal();
-            }} />
+            <Button
+                className='absolute left-18 top-5 md:top-7'
+                color='grey'
+                icon='cog'
+                iconSize='md'
+                link={true}
+                linkWithPadding
+                onClick={() => {
+                    showUserSettingsModal();
+                }} />
+
             <Owner user={ownerUser} />
             <TabView selectedTab={selectedTab} tabs={tabs} onTabChange={setSelectedTab} />
             {hasNextPage && <Button
