@@ -1,5 +1,4 @@
-import {InfiniteData} from '@tanstack/react-query';
-import {Meta, createInfiniteQuery, createMutation} from '../utils/api/hooks';
+import {Meta, createQuery, createMutation} from '../utils/api/hooks';
 
 // Types
 
@@ -27,23 +26,9 @@ export interface SocialLinkDeleteResponseType {}
 
 const dataType = 'SocialLinkResponseType';
 
-export const useBrowseSocialLinks = createInfiniteQuery<SocialLinkResponseType>({
+export const useBrowseSocialLinks = createQuery<SocialLinkResponseType>({
     dataType,
-    path: '/fields/social/',
-    returnData: (originalData) => {
-        const {pages} = originalData as InfiniteData<SocialLinkResponseType>;
-        let fields = pages.flatMap(page => page.fields);
-
-        // Remove duplicates
-        fields = fields.filter((field, index) => {
-            return fields.findIndex(({id}) => id === field.id) === index;
-        });
-
-        return {
-            fields,
-            meta: pages[pages.length - 1].meta
-        };
-    }
+    path: '/fields/social/'
 });
 
 export const useDeleteSocialLink = createMutation<SocialLinkDeleteResponseType, SocialLink>({
@@ -55,13 +40,15 @@ export const useDeleteSocialLink = createMutation<SocialLinkDeleteResponseType, 
     }
 });
 
-export const useEditSocialLink = createMutation<SocialLinkEditResponseType, Partial<SocialLink> & {id: string}>({
+export const useEditSocialLink = createMutation<SocialLinkEditResponseType, Partial<SocialLink[]>>({
     method: 'PUT',
-    path: field => `/fields/social/${field.id}/`,
-    body: field => ({fields: [field]}),
+    path: () => `/fields/social/`,
+    body: fields => ({fields}),
 
-    invalidateQueries: {
-        dataType
+    updateQueries: {
+        emberUpdateType: 'skip',
+        dataType,
+        update: newData => newData
     }
 });
 

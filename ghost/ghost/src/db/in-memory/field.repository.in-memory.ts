@@ -8,13 +8,16 @@ export class CustomFieldRepositoryInMemory implements FieldRepository {
     constructor() {
         this.fields = [
             CustomField.create({
+                id: '65ff1e3e8133692792015594',
                 name: 'Awesome',
+                enabled: true,
                 type: 'boolean'
             }),
             SocialLink.create({
+                id: '65ff210286b79d4e02a4db20',
                 name: 'Twitter',
                 placeholder: 'https://twitter.com/name',
-                icon: 'https://icon.com'
+                icon: new URL('https://icon.com')
             })
         ];
     }

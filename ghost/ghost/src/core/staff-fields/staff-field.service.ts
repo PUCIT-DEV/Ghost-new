@@ -21,6 +21,46 @@ export class StaffFieldService {
         return field;
     }
 
+    async updateCustomField(id: ObjectID, name: string, enabled: boolean) {
+        const field = await this.repository.getById(id);
+
+        if (!field) {
+            throw new Error('not exists');
+        }
+
+        if (field instanceof SocialLink) {
+            throw new Error('not a custom field');
+        }
+
+        field.name = name;
+        field.enabled = enabled;
+
+        await this.repository.save(field);
+
+        return field;
+    }
+
+    async updateSocialLink(id: ObjectID, name: string, enabled: boolean, placeholder: string|null, icon: URL) {
+        const field = await this.repository.getById(id);
+
+        if (!field) {
+            throw new Error('not exists');
+        }
+
+        if (field instanceof CustomField) {
+            throw new Error('not a social link');
+        }
+
+        field.name = name;
+        field.enabled = enabled;
+        field.placeholder = placeholder;
+        field.icon = icon;
+
+        await this.repository.save(field);
+
+        return field;
+    }
+
     async createSocialLink(name: string, placeholder: string | null, icon: string | URL, actor?: Actor) {
         const field = SocialLink.create({name, placeholder, icon}, actor);
 

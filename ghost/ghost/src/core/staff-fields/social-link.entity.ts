@@ -3,6 +3,7 @@ import {Actor} from '../../common/types/actor.type';
 
 type SocialLinkData = {
     name: string;
+    enabled: boolean;
     icon: URL;
     placeholder: string | null;
 };
@@ -18,6 +19,26 @@ export class SocialLink extends Entity<SocialLinkData> {
 
     get placeholder() {
         return this.attr.placeholder;
+    }
+
+    get enabled() {
+        return this.attr.enabled;
+    }
+
+    set name(value: string) {
+        this.set('name', value);
+    }
+
+    set placeholder(value: string|null) {
+        this.set('placeholder', value);
+    }
+
+    set enabled(value: boolean) {
+        this.set('enabled', value);
+    }
+
+    set icon(value: URL) {
+        this.set('icon', value);
     }
 
     validate(value: unknown) {
@@ -75,7 +96,8 @@ export class SocialLink extends Entity<SocialLinkData> {
         return new SocialLink({
             name,
             icon,
-            placeholder
+            placeholder,
+            enabled: false
         }, actor);
     }
 }

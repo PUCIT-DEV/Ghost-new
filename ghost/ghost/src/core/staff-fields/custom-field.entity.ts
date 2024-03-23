@@ -4,6 +4,7 @@ import {Actor} from '../../common/types/actor.type';
 type CustomFieldData = {
     name: string;
     type: 'url' | 'short' | 'long' | 'boolean';
+    enabled: boolean;
 };
 
 export class CustomField extends Entity<CustomFieldData> {
@@ -13,6 +14,18 @@ export class CustomField extends Entity<CustomFieldData> {
 
     get type() {
         return this.attr.type;
+    }
+
+    get enabled() {
+        return this.attr.enabled;
+    }
+
+    set name(value: string) {
+        this.set('name', value);
+    }
+
+    set enabled(value: boolean) {
+        this.set('enabled', value);
     }
 
     validate(value: unknown) {
@@ -75,7 +88,8 @@ export class CustomField extends Entity<CustomFieldData> {
 
         return new CustomField({
             name,
-            type
+            type,
+            enabled: false
         }, actor);
     }
 }

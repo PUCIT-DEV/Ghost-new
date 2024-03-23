@@ -1,5 +1,4 @@
-import {InfiniteData} from '@tanstack/react-query';
-import {Meta, createInfiniteQuery, createMutation} from '../utils/api/hooks';
+import {Meta, createQuery, createMutation} from '../utils/api/hooks';
 
 // Types
 
@@ -26,23 +25,9 @@ export interface CustomFieldDeleteResponseType {}
 
 const dataType = 'CustomFieldResponseType';
 
-export const useBrowseCustomFields = createInfiniteQuery<CustomFieldResponseType>({
+export const useBrowseCustomFields = createQuery<CustomFieldResponseType>({
     dataType,
-    path: '/fields/custom/',
-    returnData: (originalData) => {
-        const {pages} = originalData as InfiniteData<CustomFieldResponseType>;
-        let fields = pages.flatMap(page => page.fields);
-
-        // Remove duplicates
-        fields = fields.filter((field, index) => {
-            return fields.findIndex(({id}) => id === field.id) === index;
-        });
-
-        return {
-            fields,
-            meta: pages[pages.length - 1].meta
-        };
-    }
+    path: '/fields/custom/'
 });
 
 export const useDeleteCustomField = createMutation<CustomFieldDeleteResponseType, CustomField>({
@@ -54,13 +39,15 @@ export const useDeleteCustomField = createMutation<CustomFieldDeleteResponseType
     }
 });
 
-export const useEditCustomField = createMutation<CustomFieldEditResponseType, Partial<CustomField> & {id: string}>({
+export const useEditCustomField = createMutation<CustomFieldEditResponseType, Partial<CustomField>[]>({
     method: 'PUT',
-    path: field => `/fields/custom/${field.id}/`,
-    body: field => ({fields: [field]}),
+    path: () => `/fields/custom/`,
+    body: fields => ({fields}),
 
-    invalidateQueries: {
-        dataType
+    updateQueries: {
+        emberUpdateType: 'skip',
+        dataType,
+        update: newData => newData
     }
 });
 
