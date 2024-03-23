@@ -13,8 +13,8 @@ export class StaffFieldService {
         @Inject('StaffFieldRepository') private staffFieldRepository: StaffFieldRepository
     ) {}
 
-    async createCustomField(name: string, type: string, actor?: Actor) {
-        const field = CustomField.create({name, type}, actor);
+    async createCustomField(name: string, type: string, enabled: boolean, actor?: Actor) {
+        const field = CustomField.create({name, type, enabled}, actor);
 
         await this.repository.save(field);
 
@@ -61,8 +61,8 @@ export class StaffFieldService {
         return field;
     }
 
-    async createSocialLink(name: string, placeholder: string | null, icon: string | URL, actor?: Actor) {
-        const field = SocialLink.create({name, placeholder, icon}, actor);
+    async createSocialLink(name: string, placeholder: string | null, icon: string | URL, enabled: boolean, actor?: Actor) {
+        const field = SocialLink.create({name, placeholder, icon, enabled}, actor);
 
         await this.repository.save(field);
 

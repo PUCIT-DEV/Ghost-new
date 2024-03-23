@@ -76,7 +76,7 @@ export class CustomFieldsController {
             throw new Error('Invalid input');
         }
         const data = body.fields[0];
-        const field = await this.service.createCustomField(data.name, data.type);
+        const field = await this.service.createCustomField(data.name, data.type, data.enabled);
         return {
             fields: [this.toDTO(field)],
             meta: {}

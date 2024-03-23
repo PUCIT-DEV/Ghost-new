@@ -1,3 +1,4 @@
+import ObjectID from 'bson-objectid';
 import {Entity} from '../../common/entity.base';
 import {Actor} from '../../common/types/actor.type';
 
@@ -67,6 +68,11 @@ export class CustomField extends Entity<CustomFieldData> {
             throw new Error('Invalid data');
         }
 
+        let id = undefined;
+        if ('id' in data && typeof data.id === 'string') {
+            id = ObjectID.createFromHexString(data.id);
+        }
+
         let name = null;
         if (!('name' in data) || typeof data.name !== 'string' || data.name.trim().length > 50) {
             throw new Error(
@@ -86,10 +92,19 @@ export class CustomField extends Entity<CustomFieldData> {
             type = data.type as CustomFieldData['type'];
         }
 
+        let enabled = false;
+
+        if (!('enabled' in data) || typeof data.enabled !== 'boolean') {
+            throw new Error('Custom field enabled must be a boolean');
+        } else if ('enabled' in data && typeof data.enabled === 'boolean') {
+            enabled = data.enabled;
+        }
+
         return new CustomField({
+            id,
             name,
             type,
-            enabled: false
+            enabled
         }, actor);
     }
 }
