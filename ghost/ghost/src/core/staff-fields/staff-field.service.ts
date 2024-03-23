@@ -40,7 +40,7 @@ export class StaffFieldService {
         return field;
     }
 
-    async updateSocialLink(id: ObjectID, name: string, enabled: boolean, placeholder: string|null, icon: URL) {
+    async updateSocialLink(id: ObjectID, name: string, enabled: boolean, placeholder: string|null, icon: URL|string) {
         const field = await this.repository.getById(id);
 
         if (!field) {

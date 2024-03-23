@@ -39,6 +39,9 @@ export class SocialLink extends Entity<SocialLinkData> {
     }
 
     set icon(value: URL) {
+        if (typeof value === 'string') {
+            value = new URL(value);
+        }
         this.set('icon', value);
     }
 
