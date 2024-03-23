@@ -3,8 +3,8 @@ import NiceModal from '@ebay/nice-modal-react';
 import {CustomField} from '@tryghost/admin-x-framework/api/customFields';
 import {Icon, Modal, showToast} from '@tryghost/admin-x-design-system';
 import {SocialLink} from '@tryghost/admin-x-framework/api/socialLinks';
-import {useAddCustomField, useBrowseCustomFields} from '@tryghost/admin-x-framework/api/customFields';
-import {useAddSocialLink, useBrowseSocialLinks} from '@tryghost/admin-x-framework/api/socialLinks';
+import {useAddCustomField, useBrowseCustomFields, useEditCustomField} from '@tryghost/admin-x-framework/api/customFields';
+import {useAddSocialLink, useBrowseSocialLinks, useEditSocialLink} from '@tryghost/admin-x-framework/api/socialLinks';
 import {useEffect, useRef, useState} from 'react';
 import {useHandleError} from '@tryghost/admin-x-framework/hooks';
 import {useRouting} from '@tryghost/admin-x-framework/routing';
@@ -15,11 +15,15 @@ const UserSettingsModal = NiceModal.create(() => {
     const socialLinksQuery = useBrowseSocialLinks();
     const {mutateAsync: addCustomField} = useAddCustomField();
     const {mutateAsync: addSocialLink} = useAddSocialLink();
+    const {mutateAsync: editCustomField} = useEditCustomField();
+    const {mutateAsync: editSocialLink} = useEditSocialLink();
 
     const {updateRoute} = useRouting();
 
     const focusRef = useRef<HTMLInputElement>(null);
     const [saveState, setSaveState] = useState<'saving' | 'saved' | 'error' | ''>('');
+    const [socialLinks, setSocialLinks] = useState<SocialLink[]>(socialLinksQuery.data?.fields || []);
+    const [customFields, setCustomFields] = useState<CustomField[]>(customFieldsQuery.data?.fields || []);
     // const [errors, setErrors] = useState<{
     //     email?: string;
     //     role?: string;
@@ -41,6 +45,15 @@ const UserSettingsModal = NiceModal.create(() => {
         }
     }, [saveState]);
 
+    useEffect(() => {
+        if (socialLinksQuery.data?.fields) {
+            setSocialLinks(socialLinksQuery.data.fields);
+        }
+        if (customFieldsQuery.data?.fields) {
+            setCustomFields(customFieldsQuery.data.fields);
+        }
+    }, [socialLinksQuery.data, customFieldsQuery.data]);
+
     if (!customFieldsQuery.data?.fields) {
         return null;
     }
@@ -48,6 +61,22 @@ const UserSettingsModal = NiceModal.create(() => {
     if (!socialLinksQuery.data?.fields) {
         return null;
     }
+
+    const handleEnableField = ({id, enabled}: {id: string, enabled: boolean}) => {
+        const _socialLinks = [...socialLinks];
+        const _customFields = [...customFields];
+        const socialLinkIndex = _socialLinks.findIndex(field => field.id === id);
+        const customFieldIndex = _customFields.findIndex(field => field.id === id);
+
+        if (customFieldIndex !== -1) {
+            _customFields[customFieldIndex].enabled = enabled;
+        } else if (socialLinkIndex !== -1) {
+            _socialLinks[socialLinkIndex].enabled = enabled;
+        }
+
+        setSocialLinks(_socialLinks);
+        setCustomFields(_customFields);
+    };
 
     const handleSaveSettings = async () => {
         if (saveState === 'saving') {
@@ -57,6 +86,8 @@ const UserSettingsModal = NiceModal.create(() => {
         setSaveState('saving');
         try {
             // Do shit
+            await editCustomField(customFields);
+            await editSocialLink(socialLinks);
 
             setSaveState('saved');
 
@@ -84,12 +115,12 @@ const UserSettingsModal = NiceModal.create(() => {
             afterClose={() => {
                 updateRoute('staff');
             }}
-            cancelLabel=''
-            okLabel=''
+            cancelLabel='Cancel'
+            okLabel='Save'
             testId='user-settings-modal'
             title='Staff settings'
             width={540}
-            onCancel={handleSaveSettings}
+            onOk={handleSaveSettings}
         >
             <div className='flex flex-col py-4'>
                 <CustomFieldToggle
@@ -128,15 +159,17 @@ const UserSettingsModal = NiceModal.create(() => {
             </div>
             <div className='flex flex-col py-4'>
                 <h3 className='pb-4'>Social Links</h3>
-                {socialLinksQuery.data.fields.map((field: SocialLink, i: number) => {
+                {socialLinks?.map((field: SocialLink, i: number) => {
                     return (
                         <CustomFieldToggle
                             enabled={field.enabled}
-                            icon={field?.icon}
+                            handleChange={handleEnableField}
+                            icon={field.icon}
+                            id={field.id}
                             isFirst={i === 0}
                             name={field.name}
-                            placeholder={field?.placeholder}
-                            type="url"
+                            placeholder={field.placeholder}
+                            type='url'
                         />
                     );
                 })}
@@ -163,10 +196,12 @@ const UserSettingsModal = NiceModal.create(() => {
             </div>
             <div className='flex flex-col py-4'>
                 <h3 className='pb-4'>Custom Fields</h3>
-                {customFieldsQuery.data.fields.map((field: CustomField, i: number) => {
+                {customFields?.map((field: CustomField, i: number) => {
                     return (
                         <CustomFieldToggle
                             enabled={field.enabled}
+                            handleChange={handleEnableField}
+                            id={field.id}
                             isFirst={i === 0}
                             name={field.name}
                             type={field.type}

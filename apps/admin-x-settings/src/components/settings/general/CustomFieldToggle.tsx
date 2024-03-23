@@ -37,20 +37,24 @@ const getIconComponent = (type: 'url' | 'short' | 'long' | 'boolean', icon?: URL
 };
 
 const CustomFieldToggle: React.FC<{
+    id?: string | undefined,
     icon?: URL | null,
     name: string,
     type: 'url' | 'short' | 'long' | 'boolean',
     placeholder?: string | null,
     enabled: boolean,
     toggleDisabled?: boolean,
-    isFirst?: boolean
+    isFirst?: boolean,
+    handleChange?: (field: {id: string, enabled: boolean}) => void
 }> = ({
+    id,
     icon,
     name,
     type,
-    enabled,
+    enabled = false,
     toggleDisabled = false,
-    isFirst = false
+    isFirst = false,
+    handleChange
 }) => {
     let iconComponent = getIconComponent(type, icon);
     let typeNameFriendly = getFriendlyTypeName(type);
@@ -70,8 +74,11 @@ const CustomFieldToggle: React.FC<{
                 <Toggle
                     checked={enabled}
                     disabled={toggleDisabled}
-                    onChange={() => {
-                        alert('toggle changed');
+                    onChange={(e) => {
+                        if (!id) {
+                            return;
+                        }
+                        handleChange?.({id, enabled: e.target.checked});
                     }}
                 />
             </div>
