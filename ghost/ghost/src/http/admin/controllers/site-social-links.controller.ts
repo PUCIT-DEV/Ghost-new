@@ -5,10 +5,11 @@
  * They do not contain business logic.
  */
 
-import {Body, Controller, Get, Post} from '@nestjs/common';
+import {Body, Controller, Get, Post, Put, Param} from '@nestjs/common';
 import {Roles} from '../../../common/decorators/permissions.decorator';
 import {SiteSocialLink} from '../../../core/site-social-links/site-social-link.entity';
 import {SiteSocialLinksService} from '../../../core/site-social-links/site-social-links.service';
+import ObjectID from 'bson-objectid';
 
 type CustomFieldDTO = {
     id: string;
@@ -75,6 +76,29 @@ export class SiteSocialLinksController {
             data.name,
             data.value,
             data.icon
+        );
+        return {
+            fields: [this.toDTO(field)],
+            meta: {}
+        };
+    }
+
+    @Roles(['Admin', 'Owner', 'Admin Integration'])
+    @Put('/:id')
+    async update(@Param('id') id: string, @Body() body: unknown): Promise<Response> {
+        if (typeof body !== 'object' || body === null) {
+            throw new Error('Invalid body');
+        }
+        if (!('fields' in body)) {
+            throw new Error('Invalid input');
+        }
+        if (!Array.isArray(body.fields)) {
+            throw new Error('Invalid input');
+        }
+        const data = body.fields[0];
+        const field = await this.service.updateSiteSocialLink(
+            ObjectID.createFromHexString(id),
+            data.value
         );
         return {
             fields: [this.toDTO(field)],
