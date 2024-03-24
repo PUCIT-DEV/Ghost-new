@@ -217,7 +217,7 @@ const Users: React.FC<{ keywords: string[], highlight?: boolean }> = ({keywords,
         updateRoute('staff/invite');
     };
 
-    const showUserSettingsModal = () => {
+    const showStaffSettingsModal = () => {
         updateRoute('staff/settings');
     };
 
@@ -274,7 +274,7 @@ const Users: React.FC<{ keywords: string[], highlight?: boolean }> = ({keywords,
                 link={true}
                 linkWithPadding
                 onClick={() => {
-                    showUserSettingsModal();
+                    showStaffSettingsModal();
                 }} />
 
             <Owner user={ownerUser} />

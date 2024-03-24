@@ -19,7 +19,7 @@ import InviteUserModal from '../../settings/general/InviteUserModal';
 import NavigationModal from '../../settings/site/NavigationModal';
 import NewsletterDetailModal from '../../settings/email/newsletters/NewsletterDetailModal';
 import OfferSuccess from '../../settings/growth/offers/OfferSuccess';
-import UserSettingsModal from '../../settings/general/UserSettingsModal';
+import StaffSettingsModal from '../../settings/general/StaffSettingsModal';
 // import OffersModal from '../../settings/growth/offers/OffersIndex';
 import OffersContainerModal from '../../settings/growth/offers/OffersContainerModal';
 import PinturaModal from '../../settings/advanced/integrations/PinturaModal';
@@ -60,7 +60,7 @@ const modals = {
     // EditOfferModal,
     AboutModal,
     OfferSuccess,
-    UserSettingsModal
+    StaffSettingsModal
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } satisfies {[key: string]: ModalComponent<any>};
 

@@ -51,6 +51,10 @@ export class StaffFieldService {
             throw new Error('not a social link');
         }
 
+        if (typeof icon === 'string') {
+            icon = new URL(icon);
+        }
+
         field.name = name;
         field.enabled = enabled;
         field.placeholder = placeholder;

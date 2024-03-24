@@ -1,19 +1,20 @@
+import AddCustomField from './AddCustomField';
 import CustomFieldToggle from './CustomFieldToggle';
 import NiceModal from '@ebay/nice-modal-react';
 import {CustomField} from '@tryghost/admin-x-framework/api/customFields';
 import {Icon, Modal, showToast} from '@tryghost/admin-x-design-system';
 import {SocialLink} from '@tryghost/admin-x-framework/api/socialLinks';
-import {useAddCustomField, useBrowseCustomFields, useEditCustomField} from '@tryghost/admin-x-framework/api/customFields';
 import {useAddSocialLink, useBrowseSocialLinks, useEditSocialLink} from '@tryghost/admin-x-framework/api/socialLinks';
+import {useBrowseCustomFields, useEditCustomField} from '@tryghost/admin-x-framework/api/customFields';
+
 import {useEffect, useRef, useState} from 'react';
 import {useHandleError} from '@tryghost/admin-x-framework/hooks';
 import {useRouting} from '@tryghost/admin-x-framework/routing';
 
-const UserSettingsModal = NiceModal.create(() => {
+const StaffSettingsModal = NiceModal.create(() => {
     const modal = NiceModal.useModal();
     const customFieldsQuery = useBrowseCustomFields();
     const socialLinksQuery = useBrowseSocialLinks();
-    const {mutateAsync: addCustomField} = useAddCustomField();
     const {mutateAsync: addSocialLink} = useAddSocialLink();
     const {mutateAsync: editCustomField} = useEditCustomField();
     const {mutateAsync: editSocialLink} = useEditSocialLink();
@@ -21,6 +22,7 @@ const UserSettingsModal = NiceModal.create(() => {
     const {updateRoute} = useRouting();
 
     const focusRef = useRef<HTMLInputElement>(null);
+    const [showAddCustomField, setShowAddCustomField] = useState(false);
     const [saveState, setSaveState] = useState<'saving' | 'saved' | 'error' | ''>('');
     const [socialLinks, setSocialLinks] = useState<SocialLink[]>(socialLinksQuery.data?.fields || []);
     const [customFields, setCustomFields] = useState<CustomField[]>(customFieldsQuery.data?.fields || []);
@@ -209,26 +211,25 @@ const UserSettingsModal = NiceModal.create(() => {
                     );
                 })}
 
-                <div className='flex items-center'>
-                    <div className='mr-1 flex min-h-11 min-w-11 items-center justify-center rounded bg-grey-150'>
-                        <p className='black font-semibold'>Aa</p>
+                {showAddCustomField ?
+                    <AddCustomField onClose={() => setShowAddCustomField(false)} />
+                    :
+                    <div className='flex items-center'>
+                        <div className='mr-1 flex min-h-11 min-w-11 items-center justify-center rounded bg-grey-150'>
+                            <p className='black font-semibold'>Aa</p>
+                        </div>
+                        <div
+                            className='flex min-h-11 w-full items-center justify-between rounded bg-grey-150 px-1'
+                            onClick={() => setShowAddCustomField(true)}
+                        >
+                            <p>Add new profile field</p>
+                            <p className='text-md font-bold'>+</p>
+                        </div>
                     </div>
-                    <div
-                        className='flex min-h-11 w-full items-center justify-between rounded bg-grey-150 px-1'
-                        onClick={async () => {
-                            await addCustomField({
-                                name: 'New field',
-                                type: 'short'
-                            });
-                        }}
-                    >
-                        <p>Add new profile field</p>
-                        <p className='text-md font-bold'>+</p>
-                    </div>
-                </div>
+                }
             </div>
         </Modal>
     );
 });
 
-export default UserSettingsModal;
+export default StaffSettingsModal;

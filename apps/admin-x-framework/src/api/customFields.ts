@@ -3,12 +3,12 @@ import {Meta, createQuery, createMutation} from '../utils/api/hooks';
 // Types
 
 export type CustomField = {
-    id: string;
+    id?: string;
     name: string;
     type: 'url' | 'short' | 'long' | 'boolean';
     enabled: boolean;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface CustomFieldResponseType {
@@ -56,7 +56,14 @@ export const useAddCustomField = createMutation<CustomFieldResponseType, Partial
     path: () => '/fields/custom/',
     body: ({...field}) => ({fields: [field]}),
 
-    invalidateQueries: {
-        dataType
+    updateQueries: {
+        emberUpdateType: 'skip',
+        dataType,
+        update: (newData, currentData: any) => {
+            return {
+                ...currentData,
+                fields: [...currentData.fields, ...newData.fields]
+            };
+        }
     }
 });

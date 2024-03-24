@@ -10,7 +10,7 @@ export const modalPaths: {[key: string]: ModalName} = {
     'design/change-theme/install': 'DesignAndThemeModal',
     'navigation/edit': 'NavigationModal',
     'staff/invite': 'InviteUserModal',
-    'staff/settings': 'UserSettingsModal',
+    'staff/settings': 'StaffSettingsModal',
     'staff/:slug': 'UserDetailModal',
     'staff/:slug/edit': 'UserDetailModal',
     'portal/edit': 'PortalModal',
