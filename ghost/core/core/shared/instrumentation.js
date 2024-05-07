@@ -6,8 +6,12 @@ const {NestInstrumentation} = require('@opentelemetry/instrumentation-nestjs-cor
 const {RedisInstrumentation} = require('@opentelemetry/instrumentation-redis');
 
 async function initOpenTelemetry({config}) {
-    // Do nothing if Open Telemetry is disabled
-    if (!config.get('opentelemetry:enabled')) {
+    // Always enable in development environment
+    // In production, only enable if explicitly enabled via config `opentelemetry:enabled`
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const isConfigured = config.get('opentelemetry:enabled');
+    const enabled = isDevelopment || isConfigured;
+    if (!enabled) {
         return;
     }
     const collectorOptions = {
@@ -28,10 +32,9 @@ async function initOpenTelemetry({config}) {
     sdk.start();
 }
 
-function initKnexQueryInstrumentation({knex, config}) {
-    const Instrumentation = require('./OpenTelemetryKnexTracing');
-    const instrumentation = new Instrumentation({knex, config});
-    instrumentation.init();
+function initKnexQueryInstrumentation({knex}) {
+    const KnexTracing = require('./OpenTelemetryKnexTracing');
+    const knexTracing = new KnexTracing({knex});
 }
 
 module.exports = {

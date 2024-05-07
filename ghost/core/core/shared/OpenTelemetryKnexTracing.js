@@ -6,13 +6,13 @@ const opentelemetry = require('@opentelemetry/api');
  * 
  */
 class OpenTelemetryKnexTracing {
-    constructor({knex, config}) {
-        this.enabled = config.get('opentelemetry:enabled');
+    constructor({knex}) {
         this.tracer = opentelemetry.trace.getTracer('ghost');
         this.knex = knex;
         this.outerSpans = {};
         this.acquireSpans = {};
         this.querySpans = {};
+        this.init();
     }
 
     /**
@@ -112,23 +112,21 @@ class OpenTelemetryKnexTracing {
     }
 
     init() {
-        if (this.enabled) {
-            // Check to make sure these event listeners haven't already been added
-            if (this.knex.client.pool.emitter.eventNames().length === 0) {
-                // Fires when a connection is requested from the pool
-                this.knex.client.pool.on('acquireRequest', eventId => this.handleAcquireRequest(eventId));
-                // Fires when a connection is allocated from the pool
-                this.knex.client.pool.on('acquireSuccess', (eventId, resource) => this.handleAcquireSuccess(eventId, resource));
-                // Fires when a connection fails to be allocated from the pool
-                this.knex.client.pool.on('acquireFail', (eventId, err) => this.handleAcquireFail(eventId, err));
-                // Fires when a connection is released back into the pool
-                this.knex.client.pool.on('release', resource => this.handleRelease(resource));
+        // Check to make sure these event listeners haven't already been added
+        if (this.knex.client.pool.emitter.eventNames().length === 0) {
+            // Fires when a connection is requested from the pool
+            this.knex.client.pool.on('acquireRequest', eventId => this.handleAcquireRequest(eventId));
+            // Fires when a connection is allocated from the pool
+            this.knex.client.pool.on('acquireSuccess', (eventId, resource) => this.handleAcquireSuccess(eventId, resource));
+            // Fires when a connection fails to be allocated from the pool
+            this.knex.client.pool.on('acquireFail', (eventId, err) => this.handleAcquireFail(eventId, err));
+            // Fires when a connection is released back into the pool
+            this.knex.client.pool.on('release', resource => this.handleRelease(resource));
 
-                // Add query handlers to Knex directly
-                this.knex.on('query', query => this.handleQuery(query));
-                this.knex.on('query-response', (response, object) => this.handleQueryResponse(response, object));
-                this.knex.on('query-error', (err, query) => this.handleQueryError(err, query));
-            }
+            // Add query handlers to Knex directly
+            this.knex.on('query', query => this.handleQuery(query));
+            this.knex.on('query-response', (response, object) => this.handleQueryResponse(response, object));
+            this.knex.on('query-error', (err, query) => this.handleQueryError(err, query));
         }
     }
 }

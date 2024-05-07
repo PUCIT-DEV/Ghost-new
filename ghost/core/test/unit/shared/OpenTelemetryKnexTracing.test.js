@@ -22,10 +22,7 @@ describe('UNIT: OpenTelemetryKnexTracing', function () {
                     }
                 }
             };
-            const config = {
-                get: sinon.stub().returns(true)
-            };
-            const tracing = new OpenTelemetryKnexTracing({knex, config});
+            const tracing = new OpenTelemetryKnexTracing({knex});
             tracing.init();
             assert.ok(knex.client.pool.on.calledWith('acquireRequest'));
             assert.ok(knex.client.pool.on.calledWith('acquireSuccess'));
@@ -49,10 +46,7 @@ describe('UNIT: OpenTelemetryKnexTracing', function () {
                     }
                 }
             };
-            const config = {
-                get: sinon.stub().returns(true)
-            };
-            const tracing = new OpenTelemetryKnexTracing({knex, config});
+            const tracing = new OpenTelemetryKnexTracing({knex});
             sinon.stub(tracing.tracer, 'startSpan').returns({setAttribute: sinon.stub()});
             tracing.handleAcquireRequest(1);
             assert.ok(tracing.tracer.startSpan.calledWith('Knex'));
@@ -75,10 +69,7 @@ describe('UNIT: OpenTelemetryKnexTracing', function () {
                 end: sinon.stub(),
                 setAttribute: sinon.stub()
             };
-            const config = {
-                get: sinon.stub().returns(true)
-            };
-            const tracing = new OpenTelemetryKnexTracing({knex, config});
+            const tracing = new OpenTelemetryKnexTracing({knex});
             sinon.stub(tracing.tracer, 'startSpan').returns(spanStub);
             tracing.handleAcquireRequest(1);
             tracing.handleAcquireSuccess(1, {});
@@ -103,10 +94,7 @@ describe('UNIT: OpenTelemetryKnexTracing', function () {
                 setStatus: sinon.stub(),
                 setAttribute: sinon.stub()
             };
-            const config = {
-                get: sinon.stub().returns(true)
-            };
-            const tracing = new OpenTelemetryKnexTracing({knex, config});
+            const tracing = new OpenTelemetryKnexTracing({knex});
             sinon.stub(tracing.tracer, 'startSpan').returns(spanStub);
             tracing.handleAcquireRequest(1);
             tracing.handleAcquireFail(1, {});
@@ -130,10 +118,7 @@ describe('UNIT: OpenTelemetryKnexTracing', function () {
                 end: sinon.stub(),
                 setAttribute: sinon.stub()
             };
-            const config = {
-                get: sinon.stub().returns(true)
-            };
-            const tracing = new OpenTelemetryKnexTracing({knex, config});
+            const tracing = new OpenTelemetryKnexTracing({knex});
             sinon.stub(tracing.tracer, 'startSpan').returns(spanStub);
             tracing.handleAcquireRequest(1);
             tracing.handleAcquireSuccess(1, {});
@@ -158,10 +143,7 @@ describe('UNIT: OpenTelemetryKnexTracing', function () {
                 end: sinon.stub(),
                 setAttribute: sinon.stub()
             };
-            const config = {
-                get: sinon.stub().returns(true)
-            };
-            const tracing = new OpenTelemetryKnexTracing({knex, config});
+            const tracing = new OpenTelemetryKnexTracing({knex});
             sinon.stub(tracing.tracer, 'startSpan').returns(spanStub);
             tracing.handleAcquireRequest(1);
             tracing.handleAcquireSuccess(1, {});
@@ -192,10 +174,7 @@ describe('UNIT: OpenTelemetryKnexTracing', function () {
                 end: sinon.stub(),
                 setAttribute: sinon.stub()
             };
-            const config = {
-                get: sinon.stub().returns(true)
-            };
-            const tracing = new OpenTelemetryKnexTracing({knex, config});
+            const tracing = new OpenTelemetryKnexTracing({knex});
             sinon.stub(tracing.tracer, 'startSpan').returns(spanStub);
             tracing.handleAcquireRequest(1);
             tracing.handleAcquireSuccess(1, {});
@@ -228,10 +207,7 @@ describe('UNIT: OpenTelemetryKnexTracing', function () {
                 setAttribute: sinon.stub(),
                 setStatus: sinon.stub()
             };
-            const config = {
-                get: sinon.stub().returns(true)
-            };
-            const tracing = new OpenTelemetryKnexTracing({knex, config});
+            const tracing = new OpenTelemetryKnexTracing({knex});
             sinon.stub(tracing.tracer, 'startSpan').returns(spanStub);
             tracing.handleAcquireRequest(1);
             tracing.handleAcquireSuccess(1, {});
