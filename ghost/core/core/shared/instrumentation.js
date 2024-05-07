@@ -35,7 +35,7 @@ async function initOpenTelemetry({config}) {
 function initKnexQueryInstrumentation({knex}) {
     const KnexTracing = require('./OpenTelemetryKnexTracing');
     const knexTracing = new KnexTracing({knex});
-    return knexTracing;
+    knexTracing.init();
 }
 
 module.exports = {

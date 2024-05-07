@@ -12,7 +12,6 @@ class OpenTelemetryKnexTracing {
         this.outerSpans = {};
         this.acquireSpans = {};
         this.querySpans = {};
-        this.init();
     }
 
     /**
