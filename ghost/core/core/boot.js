@@ -514,6 +514,11 @@ async function bootGhost({backend = true, frontend = true, server = true} = {}) 
 
     try {
         // Step 1 - require more fundamental components
+        // OpenTelemetry should be configured as early as possible
+        debug('Begin: Load OpenTelemetry');
+        const opentelemetryInstrumentation = require('./shared/instrumentation');
+        opentelemetryInstrumentation.initOpenTelemetry({config});
+        debug('End: Load OpenTelemetry');
 
         // Sentry must be initialized early, but requires config
         debug('Begin: Load sentry');
@@ -536,8 +541,9 @@ async function bootGhost({backend = true, frontend = true, server = true} = {}) 
         debug('Begin: Get DB ready');
         await initDatabase({config});
         bootLogger.log('database ready');
+        const connection = require('./server/data/db/connection');
         sentry.initQueryTracing(
-            require('./server/data/db/connection')
+            connection
         );
         debug('End: Get DB ready');
 
@@ -555,6 +561,12 @@ async function bootGhost({backend = true, frontend = true, server = true} = {}) 
             await initDynamicRouting();
             await initAppService();
         }
+
+        debug('Begin: Knex Query Instrumentation');
+        // For some reason, this has to be after initCore()
+        // Otherwise the acquire events are overwritten (somewhere)
+        opentelemetryInstrumentation.initKnexQueryInstrumentation({config, knex: connection});
+        debug('End: Knex Query Instrumentation');
 
         // TODO: move this to the correct place once we figure out where that is
         if (ghostServer) {
