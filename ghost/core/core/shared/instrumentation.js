@@ -4,6 +4,7 @@ const {ExpressInstrumentation} = require('@opentelemetry/instrumentation-express
 const {HttpInstrumentation} = require('@opentelemetry/instrumentation-http');
 const {NestInstrumentation} = require('@opentelemetry/instrumentation-nestjs-core');
 const {RedisInstrumentation} = require('@opentelemetry/instrumentation-redis');
+const {getNodeAutoInstrumentations} = require('@opentelemetry/auto-instrumentations-node');
 
 async function initOpenTelemetry({config}) {
     // Always enable in development environment
@@ -23,10 +24,11 @@ async function initOpenTelemetry({config}) {
         serviceName: 'ghost',
         traceExporter: new OTLPTraceExporter(collectorOptions),
         instrumentations: [
-            new ExpressInstrumentation(),
-            new HttpInstrumentation(),
-            new NestInstrumentation(),
-            new RedisInstrumentation()
+            // new ExpressInstrumentation(),
+            // new HttpInstrumentation(),
+            // new NestInstrumentation(),
+            // new RedisInstrumentation()
+            getNodeAutoInstrumentations()
         ]
     });
     sdk.start();

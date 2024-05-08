@@ -565,7 +565,7 @@ async function bootGhost({backend = true, frontend = true, server = true} = {}) 
         debug('Begin: Knex Query Instrumentation');
         // For some reason, this has to be after initCore()
         // Otherwise the acquire events are overwritten (somewhere)
-        opentelemetryInstrumentation.initKnexQueryInstrumentation({config, knex: connection});
+        // opentelemetryInstrumentation.initKnexQueryInstrumentation({config, knex: connection});
         debug('End: Knex Query Instrumentation');
 
         // TODO: move this to the correct place once we figure out where that is
