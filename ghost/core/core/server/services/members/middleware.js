@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const _ = require('lodash');
 const logging = require('@tryghost/logging');
 const membersService = require('./service');
@@ -11,10 +12,41 @@ const {
 } = require('./utils');
 const errors = require('@tryghost/errors');
 const tpl = require('@tryghost/tpl');
+const onHeaders = require('on-headers');
 
 const messages = {
     missingUuid: 'Missing uuid.',
     invalidUuid: 'Invalid uuid.'
+};
+
+const accessInfoSession = async function accessInfoSession(req, res, next) {
+    onHeaders(res, function () {
+        if (!req.member) {
+            const accessCookie = `ghost-access=null; Max-Age=0; Path=/; HttpOnly; SameSite=Strict;`;
+            const hmacCookie = `ghost-access-hmac=null; Max-Age=0; Path=/; HttpOnly; SameSite=Strict;`;
+            const existingCookies = res.getHeader('Set-Cookie') || [];
+            const cookiesToSet = [accessCookie, hmacCookie].concat(existingCookies);
+
+            res.setHeader('Set-Cookie', cookiesToSet);
+            return;
+        }
+
+        const activeSubscription = req.member.subscriptions?.find(sub => sub.status === 'active');
+        
+        const cookieTimestamp = Math.floor(Date.now() / 1000); // to mitigate a cookie replay attack
+        const memberTier = activeSubscription && activeSubscription.tier.slug || 'free';
+        const memberTierAndTimestamp = `${memberTier}:${cookieTimestamp}`;
+        const memberTierHmac = crypto.createHmac('sha256', '53CR37').update(memberTierAndTimestamp).digest('hex');
+
+        const maxAge = 3600;
+        const accessCookie = `ghost-access=${memberTierAndTimestamp}; Max-Age=${maxAge}; Path=/; HttpOnly; SameSite=Strict;`;
+        const hmacCookie = `ghost-access-hmac=${memberTierHmac}; Max-Age=${maxAge}; Path=/; HttpOnly; SameSite=Strict;`;
+
+        const existingCookies = res.getHeader('Set-Cookie') || [];
+        const cookiesToSet = [accessCookie, hmacCookie].concat(existingCookies);
+        res.setHeader('Set-Cookie', cookiesToSet);
+    });
+    next();
 };
 
 // @TODO: This piece of middleware actually belongs to the frontend, not to the member app
@@ -92,7 +124,7 @@ const deleteSession = async function deleteSession(req, res) {
 
 const getMemberData = async function getMemberData(req, res) {
     try {
-        const member = await membersService.ssr.getMemberDataFromSession(req, res);
+        const member = req.member;
         if (member) {
             res.json(formattedMemberResponse(member));
         } else {
@@ -322,5 +354,6 @@ module.exports = {
     updateMemberData,
     updateMemberNewsletters,
     deleteSession,
+    accessInfoSession,
     deleteSuppression
 };
