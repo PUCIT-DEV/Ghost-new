@@ -1,5 +1,4 @@
 const path = require('path');
-const config = require('../../../shared/config');
 const debug = require('@tryghost/debug')('services:routing:renderer:renderer');
 const {IncorrectUsageError} = require('@tryghost/errors');
 const setContext = require('./context');
