@@ -34,6 +34,8 @@ function SiteRouter(req, res, next) {
     router(req, res, next);
 }
 
+const shouldCacheMembersContent = config.get('cacheMembersContent:enabled');
+
 /**
  *
  * @param {import('../services/routing/RouterManager').RouterConfig} routerConfig
@@ -171,8 +173,16 @@ module.exports = function setupSiteApp(routerConfig) {
     // ### Caching
     siteApp.use(function frontendCaching(req, res, next) {
         // Site frontend is cacheable UNLESS request made by a member or site is in private mode
-        if (req.member || res.isPrivateBlog) {
+        // Never cache if the blog is set to private
+        if (res.isPrivateBlog) {
             return shared.middleware.cacheControl('private')(req, res, next);
+        } else if (req.member) {
+            // Only cache member's content if the site is explicitly configured to do so
+            if (shouldCacheMembersContent) {
+                return shared.middleware.cacheControl('public', {maxAge: config.get('caching:frontend:maxAge')})(req, res, next);
+            } else {
+                return shared.middleware.cacheControl('private')(req, res, next);
+            }
         } else {
             return shared.middleware.cacheControl('public', {maxAge: config.get('caching:frontend:maxAge')})(req, res, next);
         }
