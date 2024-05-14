@@ -955,7 +955,7 @@ jobs:
 
       - name: Set env variables
         run: |
-          echo "CANARY_BUILD_INPUTS={\"version\":\"canary\",\"environment\":\"staging\"}" >> $GITHUB_ENV
+          echo "CANARY_BUILD_INPUTS={\"version\":\"canary-arch\",\"environment\":\"staging\"}" >> $GITHUB_ENV
 
       - name: Invoke build
         uses: aurelien-baudet/workflow-dispatch@v2
