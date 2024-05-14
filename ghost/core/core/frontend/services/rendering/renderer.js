@@ -1,4 +1,5 @@
 const path = require('path');
+const config = require('../../../shared/config');
 const debug = require('@tryghost/debug')('services:routing:renderer:renderer');
 const {IncorrectUsageError} = require('@tryghost/errors');
 const setContext = require('./context');
@@ -7,6 +8,8 @@ const tpl = require('@tryghost/tpl');
 const messages = {
     couldNotReadFile: 'Could not read file {file}'
 };
+
+const shouldCacheMembersContent = config.get('cacheMembersContent:enabled');
 
 /**
  * @description Helper function to finally render the data.
@@ -45,13 +48,15 @@ module.exports = function renderer(req, res, data) {
         }
         // Only cache members content if the site is explicitly configured to do so
         // This is an experimental feature and should not be enabled by default
-        if (res.locals.member) {
-            // Insert logic to check if we're using specific members data here
-            // For now we're only enabling this on sites that we have pre-verified do not use @member.name or other specific member data
-            // Get the member's active subscription to determine which tier to cache the page for
-            const activeSubscription = res.locals.member.subscriptions.find(sub => sub.status === 'active');
-            const memberTier = activeSubscription && activeSubscription.tier.slug || 'free';
-            res.setHeader('X-Member-Cache-Tier', memberTier);
+        if (shouldCacheMembersContent) {
+            if (res.locals.member) {
+                // Insert logic to check if we're using specific members data here
+                // For now we're only enabling this on sites that we have pre-verified do not use @member.name or other specific member data
+                // Get the member's active subscription to determine which tier to cache the page for
+                const activeSubscription = res.locals.member.subscriptions.find(sub => sub.status === 'active');
+                const memberTier = activeSubscription && activeSubscription.tier.slug || 'free';
+                res.setHeader('X-Member-Cache-Tier', memberTier);
+            }
         }
         res.send(html);
     });

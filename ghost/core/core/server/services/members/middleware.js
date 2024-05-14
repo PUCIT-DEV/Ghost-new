@@ -124,7 +124,7 @@ const deleteSession = async function deleteSession(req, res) {
 
 const getMemberData = async function getMemberData(req, res) {
     try {
-        const member = req.member;
+        const member = await membersService.ssr.getMemberDataFromSession(req, res);
         if (member) {
             res.json(formattedMemberResponse(member));
         } else {

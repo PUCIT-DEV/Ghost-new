@@ -16,6 +16,8 @@ const api = require('../../api').endpoints;
 const commentRouter = require('../comments');
 const announcementRouter = require('../announcement');
 
+const shouldCacheMembersContent = config.get('cacheMembersContent:enabled');
+
 /**
  * @returns {import('express').Application}
  */
@@ -45,7 +47,12 @@ module.exports = function setupMembersApp() {
     membersApp.put('/api/member/newsletters', bodyParser.json({limit: '50mb'}), middleware.updateMemberNewsletters);
 
     // Get and update member data
-    membersApp.get('/api/member', middleware.loadMemberSession, middleware.accessInfoSession, middleware.getMemberData);
+    if (shouldCacheMembersContent) {
+        membersApp.get('/api/member', middleware.loadMemberSession, middleware.accessInfoSession, middleware.getMemberData);
+    } else {
+        membersApp.get('/api/member', middleware.getMemberData);
+    }
+    
     membersApp.put('/api/member', bodyParser.json({limit: '50mb'}), middleware.updateMemberData);
     membersApp.post('/api/member/email', bodyParser.json({limit: '50mb'}), (req, res) => membersService.api.middleware.updateEmailAddress(req, res));
 
