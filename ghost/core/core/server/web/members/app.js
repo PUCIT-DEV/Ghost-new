@@ -16,8 +16,6 @@ const api = require('../../api').endpoints;
 const commentRouter = require('../comments');
 const announcementRouter = require('../announcement');
 
-const shouldCacheMembersContent = config.get('cacheMembersContent:enabled');
-
 /**
  * @returns {import('express').Application}
  */
@@ -47,6 +45,8 @@ module.exports = function setupMembersApp() {
     membersApp.put('/api/member/newsletters', bodyParser.json({limit: '50mb'}), middleware.updateMemberNewsletters);
 
     // Get and update member data
+    // Caching members content is an experimental feature
+    const shouldCacheMembersContent = config.get('members:cacheMembersContent');
     if (shouldCacheMembersContent) {
         membersApp.get('/api/member', middleware.loadMemberSession, middleware.accessInfoSession, middleware.getMemberData);
     } else {
