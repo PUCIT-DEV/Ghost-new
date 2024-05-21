@@ -55,10 +55,9 @@ describe('frontendCaching', function () {
         };
         res.isPrivateBlog = undefined;
         frontendCaching(req, res, next);
-        assert.equal(res.set.callCount, 3);
+        assert.equal(res.set.callCount, 2);
         assert.ok(res.set.calledWith({'Cache-Control': testUtils.cacheRules.public}));
         assert.ok(res.set.calledWith({'X-Member-Cache-Tier': 'free'}));
-        assert.ok(res.set.calledWith({Vary: 'X-Member-Cache-Tier'}));
     });
 
     describe('calculateMemberTier', function () {

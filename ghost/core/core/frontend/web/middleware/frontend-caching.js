@@ -70,9 +70,6 @@ function setFrontendCacheHeaders(req, res, next) {
         // The member is either on the free tier or has a single active subscription
         // Cache the content based on the member's tier
         res.set({'X-Member-Cache-Tier': memberTier});
-        let varyValue = res.get('Vary');
-        varyValue = varyValue ? `${varyValue}, X-Member-Cache-Tier` : 'X-Member-Cache-Tier';
-        res.set({Vary: varyValue});
         return shared.middleware.cacheControl('public', {maxAge: config.get('caching:frontend:maxAge')})(req, res, next);
     }
 
