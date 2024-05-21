@@ -169,7 +169,11 @@ module.exports = function setupSiteApp(routerConfig) {
     siteApp.use(shared.middleware.prettyUrls);
 
     // ### Caching
-    siteApp.use(mw.frontendCaching);
+    siteApp.use(async function frontendCaching(req, res, next) {
+        const getFreeTier = await mw.frontendCaching.getFreeTier();
+        const middleware = mw.frontendCaching.getMiddleware(getFreeTier);
+        middleware(req, res, next);
+    });
 
     siteApp.use(function memberPageViewMiddleware(req, res, next) {
         if (req.member) {

@@ -453,8 +453,8 @@ Object {
   "content-type": "application/json; charset=utf-8",
   "etag": StringMatching /\\(\\?:W\\\\/\\)\\?"\\(\\?:\\[ !#-\\\\x7E\\\\x80-\\\\xFF\\]\\*\\|\\\\r\\\\n\\[\\\\t \\]\\|\\\\\\\\\\.\\)\\*"/,
   "set-cookie": Array [
-    StringMatching /\\^ghost-access=free:/,
-    StringMatching /\\^ghost-access-hmac=/,
+    StringMatching /\\^ghost-access=\\[0-9a-fA-F\\]\\{24\\}:\\\\d\\{10\\}/,
+    StringMatching /\\^ghost-access-hmac=\\[a-fA-F0-9\\]\\{64\\}/,
   ],
   "vary": "Accept-Encoding",
   "x-powered-by": "Express",

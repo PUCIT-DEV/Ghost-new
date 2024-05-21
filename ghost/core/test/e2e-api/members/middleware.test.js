@@ -238,8 +238,8 @@ describe('Comments API', function () {
                 .matchHeaderSnapshot({
                     etag: anyEtag,
                     'set-cookie': [
-                        stringMatching(/^ghost-access=free:/),
-                        stringMatching(/^ghost-access-hmac=/)
+                        stringMatching(/^ghost-access=[0-9a-fA-F]{24}:\d{10}/),
+                        stringMatching(/^ghost-access-hmac=[a-fA-F0-9]{64}/)
                     ]
                 })
                 .matchBodySnapshot(memberMatcher(2))

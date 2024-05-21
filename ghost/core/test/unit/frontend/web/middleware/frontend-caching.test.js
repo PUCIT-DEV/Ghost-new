@@ -11,6 +11,9 @@ describe('frontendCaching', function () {
     let res;
     let req;
     let next;
+    let middleware;
+    let freeTier;
+    let premiumTier;
 
     this.beforeEach(function () {
         res = {
@@ -19,6 +22,9 @@ describe('frontendCaching', function () {
         };
         req = sinon.spy();
         next = sinon.spy();
+        freeTier = {id: 'freeTierId'};
+        premiumTier = {id: 'premiumTierId'};
+        middleware = frontendCaching.getMiddleware(freeTier);
     });
 
     this.afterEach(async function () {
@@ -28,14 +34,14 @@ describe('frontendCaching', function () {
 
     it('should set cache control to private if the blog is private', function () {
         res.isPrivateBlog = true;
-        frontendCaching(req, res, next);
+        middleware(req, res, next);
         assert(res.set.calledOnce);
         assert.ok(res.set.calledWith({'Cache-Control': testUtils.cacheRules.private}));
     });
 
     it('should set cache control to private if the request is made by a member', function () {
         req.member = true;
-        frontendCaching(req, res, next);
+        middleware(req, res, next);
         assert.ok(res.set.calledOnce);
         assert.ok(res.set.calledWith({'Cache-Control': testUtils.cacheRules.private}));
     });
@@ -43,7 +49,7 @@ describe('frontendCaching', function () {
     it('should set cache control to public if the site is public and the request is not made by a member', function () {
         req.member = undefined;
         res.isPrivateBlog = undefined;
-        frontendCaching(req, res, next);
+        middleware(req, res, next);
         assert.ok(res.set.calledOnce);
         assert.ok(res.set.calledWith({'Cache-Control': testUtils.cacheRules.public}));
     });
@@ -54,10 +60,10 @@ describe('frontendCaching', function () {
             subscriptions: []
         };
         res.isPrivateBlog = undefined;
-        frontendCaching(req, res, next);
+        middleware(req, res, next);
         assert.equal(res.set.callCount, 2);
         assert.ok(res.set.calledWith({'Cache-Control': testUtils.cacheRules.public}));
-        assert.ok(res.set.calledWith({'X-Member-Cache-Tier': 'free'}));
+        assert.ok(res.set.calledWith({'X-Member-Cache-Tier': 'freeTierId'}));
     });
 
     describe('calculateMemberTier', function () {
@@ -65,24 +71,24 @@ describe('frontendCaching', function () {
             const member = {
                 subscriptions: [{status: 'active'}, {status: 'active'}]
             };
-            const memberTier = frontendCaching.calculateMemberTier(member);
+            const memberTier = frontendCaching.calculateMemberTier(member, freeTier);
             assert.equal(memberTier, null);
         });
 
         it('should return the tier if the member has one active subscription', function () {
             const member = {
-                subscriptions: [{status: 'active', tier: {slug: 'premium'}}]
+                subscriptions: [{status: 'active', tier: premiumTier}]
             };
-            const memberTier = frontendCaching.calculateMemberTier(member);
-            assert.equal(memberTier, 'premium');
+            const memberTier = frontendCaching.calculateMemberTier(member, freeTier);
+            assert.deepEqual(memberTier, premiumTier);
         });
 
         it('should return free if the member has no active subscriptions', function () {
             const member = {
                 subscriptions: []
             };
-            const memberTier = frontendCaching.calculateMemberTier(member);
-            assert.equal(memberTier, 'free');
+            const memberTier = frontendCaching.calculateMemberTier(member, freeTier);
+            assert.equal(memberTier, freeTier);
         });
     });
 });

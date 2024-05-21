@@ -13,13 +13,21 @@ const {
 const errors = require('@tryghost/errors');
 const tpl = require('@tryghost/tpl');
 const onHeaders = require('on-headers');
+const tiersService = require('../tiers/service');
 
 const messages = {
     missingUuid: 'Missing uuid.',
     invalidUuid: 'Invalid uuid.'
 };
 
+const getFreeTier = async function getFreeTier() {
+    const response = await tiersService.api.browse();
+    const freeTier = response.data.find(tier => tier.type === 'free');
+    return freeTier;
+};
+
 const accessInfoSession = async function accessInfoSession(req, res, next) {
+    const freeTier = await getFreeTier();
     onHeaders(res, function () {
         if (!req.member) {
             const accessCookie = `ghost-access=null; Max-Age=0; Path=/; HttpOnly; SameSite=Strict;`;
@@ -30,11 +38,10 @@ const accessInfoSession = async function accessInfoSession(req, res, next) {
             res.setHeader('Set-Cookie', cookiesToSet);
             return;
         }
-
         const activeSubscription = req.member.subscriptions?.find(sub => sub.status === 'active');
         
         const cookieTimestamp = Math.floor(Date.now() / 1000); // to mitigate a cookie replay attack
-        const memberTier = activeSubscription && activeSubscription.tier.slug || 'free';
+        const memberTier = activeSubscription && activeSubscription.tier.id || freeTier.id;
         const memberTierAndTimestamp = `${memberTier}:${cookieTimestamp}`;
         const memberTierHmac = crypto.createHmac('sha256', '53CR37').update(memberTierAndTimestamp).digest('hex');
 
