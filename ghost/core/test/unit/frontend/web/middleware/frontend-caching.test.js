@@ -5,7 +5,7 @@ const configUtils = require('../../../../utils/configUtils');
 
 const frontendCaching = require('../../../../../core/frontend/web/middleware/frontend-caching');
 
-const cacheMembersContentConfigKey = 'members:cacheMembersContent';
+const cacheMembersContentConfigKey = 'cacheMembersContent:enabled';
 
 describe('frontendCaching', function () {
     let res;

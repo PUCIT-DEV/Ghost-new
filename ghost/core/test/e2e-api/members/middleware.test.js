@@ -227,7 +227,7 @@ describe('Comments API', function () {
 
     describe('when caching members content is enabled', function () {
         it('sets ghost-access and ghost-access-hmac cookies', async function () {
-            configUtils.set('members:cacheMembersContent', true);
+            configUtils.set('cacheMembersContent:enabled', true);
             membersAgent = await agentProvider.getMembersAPIAgent();
             await fixtureManager.init('newsletters', 'members:newsletters');
             await membersAgent.loginAs('member@example.com');

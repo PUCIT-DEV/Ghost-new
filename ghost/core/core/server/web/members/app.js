@@ -46,7 +46,7 @@ module.exports = function setupMembersApp() {
 
     // Get and update member data
     // Caching members content is an experimental feature
-    const shouldCacheMembersContent = config.get('members:cacheMembersContent');
+    const shouldCacheMembersContent = config.get('cacheMembersContent:enabled');
     if (shouldCacheMembersContent) {
         membersApp.get('/api/member', middleware.loadMemberSession, middleware.accessInfoSession, middleware.getMemberData);
     } else {

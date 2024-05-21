@@ -45,7 +45,7 @@ function setFrontendCacheHeaders(req, res, next) {
     // - the request is made by a member and the site is not configured to cache members content
 
     // Only cache member's content if the site is explicitly configured to do so
-    const shouldCacheMembersContent = config.get('members:cacheMembersContent');
+    const shouldCacheMembersContent = config.get('cacheMembersContent:enabled');
 
     // CASE: Never cache if the blog is set to private
     if (res.isPrivateBlog) {
