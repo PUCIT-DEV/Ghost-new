@@ -15,7 +15,7 @@ describe('frontendCaching', function () {
     let freeTier;
     let premiumTier;
 
-    this.beforeEach(function () {
+    this.beforeEach(async function () {
         res = {
             set: sinon.spy(),
             get: sinon.stub().returns(undefined)
@@ -24,7 +24,7 @@ describe('frontendCaching', function () {
         next = sinon.spy();
         freeTier = {id: 'freeTierId'};
         premiumTier = {id: 'premiumTierId'};
-        middleware = frontendCaching.getMiddleware(freeTier);
+        middleware = await frontendCaching.getMiddleware(async () => Promise.resolve(freeTier));
     });
 
     this.afterEach(async function () {

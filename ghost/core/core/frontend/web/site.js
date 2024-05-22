@@ -170,9 +170,12 @@ module.exports = function setupSiteApp(routerConfig) {
 
     // ### Caching
     siteApp.use(async function frontendCaching(req, res, next) {
-        const getFreeTier = await mw.frontendCaching.getFreeTier();
-        const middleware = mw.frontendCaching.getMiddleware(getFreeTier);
-        middleware(req, res, next);
+        try {
+            const middleware = await mw.frontendCaching.getMiddleware();
+            return middleware(req, res, next);
+        } catch {
+            return next();
+        }
     });
 
     siteApp.use(function memberPageViewMiddleware(req, res, next) {
