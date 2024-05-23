@@ -112,7 +112,12 @@ class ActiveTheme {
         siteApp.cache = {};
         // Set the views and engine
         siteApp.set('views', this.path);
-        siteApp.engine('hbs', engine.configure(this.partialsPath, this.path));
+        const hbsEngine = engine.configure(this.partialsPath, this.path);
+        siteApp.engine('hbs', function (view, opts, done) {
+            hbsEngine(view, opts, function (err, res) {
+                return done(err, res, {dataUsed: engine.datamap[view]});
+            });
+        });
 
         this._mounted = true;
     }
