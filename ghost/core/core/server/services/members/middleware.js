@@ -43,12 +43,16 @@ const setAccessCookies = function setAccessCookies(member = undefined, res, free
         res.setHeader('Set-Cookie', cookiesToSet);
         return;
     }
+    const hmacSecret = config.get('cacheMembersContent:hmacSecret');
+    if (!hmacSecret) {
+        return;
+    }
     const activeSubscription = member.subscriptions?.find(sub => sub.status === 'active');
 
     const cookieTimestamp = Math.floor(Date.now() / 1000); // to mitigate a cookie replay attack
     const memberTier = activeSubscription && activeSubscription.tier.id || freeTier.id;
     const memberTierAndTimestamp = `${memberTier}:${cookieTimestamp}`;
-    const memberTierHmac = crypto.createHmac('sha256', '53CR37').update(memberTierAndTimestamp).digest('hex');
+    const memberTierHmac = crypto.createHmac('sha256', hmacSecret).update(memberTierAndTimestamp).digest('hex');
 
     const maxAge = 3600;
     const accessCookie = `ghost-access=${memberTierAndTimestamp}; Max-Age=${maxAge}; Path=/; HttpOnly; SameSite=Strict;`;
