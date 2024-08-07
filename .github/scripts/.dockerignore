@@ -1,0 +1,27 @@
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Ignore local development directories and files
+*.log
+*.tmp
+.tmp
+.cache
+
+# Ignore version control directories
+.git
+.gitignore
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+
+# Ignore build outputs
+dist
+build
+umd
+
+# Ignore tooling foldrs
+.nx-cache
+.vscode
+coverage

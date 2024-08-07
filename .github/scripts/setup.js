@@ -43,7 +43,9 @@ async function runAndStream(command, args, options) {
     });
 
     const dbClient = config.get('database:client');
-    const isUsingDocker = config.get('database:docker');
+    const isUsingDocker = config.get('database:docker') && !process.env.DOCKER_FULL;
+    console.log('process.env', process.env);
+    console.log('isUsingDocker', isUsingDocker);
 
     // Only reset data if we are using Docker
     let resetData = false;
