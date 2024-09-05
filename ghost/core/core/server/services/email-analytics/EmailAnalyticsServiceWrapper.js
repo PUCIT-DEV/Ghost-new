@@ -1,5 +1,6 @@
+const jobManager = require('../../services/jobs');
 const logging = require('@tryghost/logging');
-
+const path = require('path');
 class EmailAnalyticsServiceWrapper {
     init() {
         if (this.service) {
@@ -11,6 +12,7 @@ class EmailAnalyticsServiceWrapper {
         const MailgunProvider = require('@tryghost/email-analytics-provider-mailgun');
         const {EmailRecipientFailure, EmailSpamComplaintEvent, Email} = require('../../models');
         const StartEmailAnalyticsJobEvent = require('./events/StartEmailAnalyticsJobEvent');
+        const {MemberEmailAnalyticsUpdateEvent} = require('../../../../../member-events');
 
         const domainEvents = require('@tryghost/domain-events');
         const config = require('../../../shared/config');
@@ -47,13 +49,18 @@ class EmailAnalyticsServiceWrapper {
             providers: [
                 new MailgunProvider({config, settings})
             ],
-            queries
+            queries,
+            domainEvents
         });
 
         // We currently cannot trigger a non-offloaded job from the job manager
         // So the email analytics jobs simply emits an event.
         domainEvents.subscribe(StartEmailAnalyticsJobEvent, async () => {
             await this.startFetch();
+        });
+
+        domainEvents.subscribe(MemberEmailAnalyticsUpdateEvent, async (event) => {
+            jobManager.addJob({name: `member-email-analytics-update-${event.data.memberId}`, job: path.resolve(__dirname, 'jobs/member-email-analytics-update.js'), data: {memberId: event.data.memberId}, offloaded: false});
         });
     }
 

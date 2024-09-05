@@ -1,7 +1,7 @@
 const EventProcessingResult = require('./EventProcessingResult');
 const logging = require('@tryghost/logging');
 const errors = require('@tryghost/errors');
-
+const {MemberEmailAnalyticsUpdateEvent} = require('@tryghost/member-events');
 /**
  * @typedef {import('@tryghost/email-service').EmailEventProcessor} EmailEventProcessor
  */
@@ -73,13 +73,15 @@ module.exports = class EmailAnalyticsService {
      * @param {object} dependencies.queries
      * @param {EmailEventProcessor} dependencies.eventProcessor
      * @param {object} dependencies.providers
+     * @param {import('@tryghost/domain-events')} dependencies.domainEvents
      */
-    constructor({config, settings, queries, eventProcessor, providers}) {
+    constructor({config, settings, queries, eventProcessor, providers, domainEvents}) {
         this.config = config;
         this.settings = settings;
         this.queries = queries;
         this.eventProcessor = eventProcessor;
         this.providers = providers;
+        this.domainEvents = domainEvents;
     }
 
     getStatus() {
@@ -509,12 +511,13 @@ module.exports = class EmailAnalyticsService {
         logging.info(`[EmailAnalytics] Aggregating for ${emailIds.length} emails took ${endTime}ms`);
 
         startTime = Date.now();
-        logging.info(`[EmailAnalytics] Aggregating for ${memberIds.length} members`);
+        logging.info(`[EmailAnalytics] Dispatching ${memberIds.length} member email analytics update events`);
         for (const memberId of memberIds) {
-            await this.aggregateMemberStats(memberId);
+            // Dispatch an event that the jobs service will handle so we can continue ingested email events.
+            this.domainEvents.dispatch(MemberEmailAnalyticsUpdateEvent.create({memberId}));
         }
         endTime = Date.now() - startTime;
-        logging.info(`[EmailAnalytics] Aggregating for ${memberIds.length} members took ${endTime}ms`);
+        logging.info(`[EmailAnalytics] Dispatching ${memberIds.length} member email analytics update events took ${endTime}ms`);
     }
 
     /**
@@ -525,14 +528,5 @@ module.exports = class EmailAnalyticsService {
      */
     async aggregateEmailStats(emailId, includeOpenedEvents) {
         return this.queries.aggregateEmailStats(emailId, includeOpenedEvents);
-    }
-
-    /**
-     * Aggregate member stats for a given member ID.
-     * @param {string} memberId - The ID of the member to aggregate stats for.
-     * @returns {Promise<void>}
-     */
-    async aggregateMemberStats(memberId) {
-        return this.queries.aggregateMemberStats(memberId);
     }
 };
