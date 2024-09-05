@@ -141,13 +141,24 @@ const FeedItem: React.FC<FeedItemProps> = ({actor, object, layout, type, last}) 
     const date = new Date(object?.published ?? new Date());
 
     const [isClicked, setIsClicked] = useState(false);
-    const [isLiked, setIsLiked] = useState(false);
+    const [isLiked, setIsLiked] = useState(object.liked);
 
-    const handleLikeClick = (event: React.MouseEvent<HTMLElement> | undefined) => {
+    const handleLikeClick = async (event: React.MouseEvent<HTMLElement> | undefined) => {
         event?.stopPropagation();
         setIsClicked(true);
+        let req;
+        if (!isLiked) {
+            req = fetch(`/.ghost/activitypub/actions/like/${encodeURIComponent(object.id)}`, {
+                method: 'POST'
+            });
+        } else {
+            req = fetch(`/.ghost/activitypub/actions/unlike/${encodeURIComponent(object.id)}`, {
+                method: 'POST'
+            });
+        }
+        await req;
         setIsLiked(!isLiked);
-        setTimeout(() => setIsClicked(false), 300); // Reset the animation class after 300ms
+        setIsClicked(false); // Reset the animation class after request completed
     };
 
     let author = actor;
