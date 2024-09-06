@@ -37,8 +37,9 @@ class JobManager {
      * @param {Function} [options.workerMessageHandler] - custom message handler coming from workers
      * @param {Object} [options.JobModel] - a model which can persist job data in the storage
      * @param {Object} [options.domainEvents] - domain events emitter
+     * @param {boolean} [options.isMentions] - whether the job manager is for mentions
      */
-    constructor({errorHandler, workerMessageHandler, JobModel, domainEvents}) {
+    constructor({errorHandler, workerMessageHandler, JobModel, domainEvents, isMentions = false}) {
         this.queue = fastq(this, worker, 3);
         this._jobMessageHandler = this._jobMessageHandler.bind(this);
         this._jobErrorHandler = this._jobErrorHandler.bind(this);
@@ -73,6 +74,9 @@ class JobManager {
 
         if (JobModel) {
             this._jobsRepository = new JobsRepository({JobModel});
+            if (!isMentions) {
+                this.startQueuedJobsWorker();
+            }
         }
     }
 
@@ -393,6 +397,71 @@ class JobManager {
     }
 
     /**
+     * Start a worker to check and execute queued jobs
+     * @param {number} interval - Interval in milliseconds to check for new jobs
+     */
+    startQueuedJobsWorker(interval = 5000) {
+        let isProcessing = false;
+
+        const processNextJob = async () => {
+            console.log('Processing next job');
+            if (isProcessing) {
+                return;
+            }
+
+            isProcessing = true;
+            try {
+                const queuedJob = await this._jobsRepository.getNextQueuedJob();
+                if (queuedJob) {
+                    const name = queuedJob.get('name');
+                    const metadata = queuedJob.get('metadata');
+                    const {job: jobPath, data} = JSON.parse(metadata);
+
+                    await this.addJob({
+                        name,
+                        job: jobPath,
+                        data,
+                        offloaded: false
+                    });
+
+                    // Update the job status to started
+                    await this._jobsRepository.update(queuedJob.id, {
+                        status: ALL_STATUSES.started,
+                        queue_entry: 1,
+                        started_at: new Date()
+                    });
+
+                    // Wait for job completion
+                    await this.awaitCompletion(name);
+
+                    // Update the job status to finished
+                    await this._jobsRepository.delete(queuedJob.id);
+
+                    // Process next job immediately
+                    setImmediate(processNextJob);
+                }
+            } catch (error) {
+                logging.error(new UnhandledJobError({
+                    message: 'Error processing queued job',
+                    context: error
+                }));
+            } finally {
+                isProcessing = false;
+            }
+        };
+
+        // Initial call to start processing
+        processNextJob();
+
+        // Set up interval to check for new jobs
+        this.queuedJobsWorkerInterval = setInterval(() => {
+            if (!isProcessing) {
+                processNextJob();
+            }
+        }, interval);
+    }
+
+    /**
      * @param {import('p-wait-for').Options} [options]
      */
     async shutdown(options) {
@@ -407,6 +476,10 @@ class JobManager {
         await pWaitFor(() => this.queue.idle() === true, options);
 
         logging.warn('Job queue finished');
+
+        if (this.queuedJobsWorkerInterval) {
+            clearInterval(this.queuedJobsWorkerInterval);
+        }
     }
 }
 

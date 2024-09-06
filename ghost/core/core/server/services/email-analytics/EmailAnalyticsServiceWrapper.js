@@ -1,6 +1,8 @@
 const jobManager = require('../../services/jobs');
 const logging = require('@tryghost/logging');
 const path = require('path');
+const ObjectID = require('bson-objectid').default;
+
 class EmailAnalyticsServiceWrapper {
     init() {
         if (this.service) {
@@ -60,7 +62,27 @@ class EmailAnalyticsServiceWrapper {
         });
 
         domainEvents.subscribe(MemberEmailAnalyticsUpdateEvent, async (event) => {
-            jobManager.addJob({name: `member-email-analytics-update-${event.data.memberId}`, job: path.resolve(__dirname, 'jobs/member-email-analytics-update.js'), data: {memberId: event.data.memberId}, offloaded: false});
+            console.log('-- inserting job to table');
+            const jobName = `member-email-analytics-update-${event.data.memberId}`;
+            const existingJob = await db.knex('jobs').where('name', jobName).first();
+
+            if (!existingJob) {
+                await db.knex('jobs').insert({
+                    id: new ObjectID().toHexString(),
+                    name: jobName,
+                    status: 'queued',
+                    created_at: new Date(),
+                    metadata: JSON.stringify({
+                        data: {
+                            memberId: event.data.memberId
+                        },
+                        job: path.resolve(__dirname, 'jobs/member-email-analytics-update.js')
+                    }),
+                    queue_entry: 1
+                });
+            } else {
+                console.log('---- job already exists, not inserting');
+            }
         });
     }
 
