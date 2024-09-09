@@ -62,7 +62,7 @@ class EmailAnalyticsServiceWrapper {
         });
 
         domainEvents.subscribe(MemberEmailAnalyticsUpdateEvent, async (event) => {
-            console.log('-- inserting job to table');
+            // console.log('-- inserting job to table');
             const jobName = `member-email-analytics-update-${event.data.memberId}`;
             const existingJob = await db.knex('jobs').where('name', jobName).first();
 
@@ -81,7 +81,7 @@ class EmailAnalyticsServiceWrapper {
                     queue_entry: 1
                 });
             } else {
-                console.log('---- job already exists, not inserting');
+                // console.log('---- job already exists, not inserting');
             }
         });
     }

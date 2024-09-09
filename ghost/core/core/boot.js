@@ -127,6 +127,9 @@ async function initCore({ghostServer, config, bootLogger, frontend}) {
         // Job Service allows parts of Ghost to run in the background
         debug('Begin: Job Service');
         const jobService = require('./server/services/jobs');
+        const jobMngr = require('../../job-manager-background/lib/JobManagerBackground');
+        const jobManager = new jobMngr({JobModel: models.Job});
+        await jobManager.init();
 
         if (config.get('server:testmode')) {
             jobService.initTestMode();
@@ -445,8 +448,8 @@ async function initBackgroundServices({config}) {
     const updateCheck = require('./server/update-check');
     updateCheck.scheduleRecurringJobs();
 
-    const milestonesService = require('./server/services/milestones');
-    milestonesService.initAndRun();
+    // const milestonesService = require('./server/services/milestones');
+    // milestonesService.initAndRun();
 
     // Ideally OpenTelemetry should be configured as early as possible
     // However, it can take a long time to initialize, so we load it here

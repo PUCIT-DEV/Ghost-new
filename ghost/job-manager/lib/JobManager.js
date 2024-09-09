@@ -74,9 +74,9 @@ class JobManager {
 
         if (JobModel) {
             this._jobsRepository = new JobsRepository({JobModel});
-            if (!isMentions) {
-                this.startQueuedJobsWorker();
-            }
+            // if (!isMentions) {
+            //     this.startQueuedJobsWorker();
+            // }
         }
     }
 
@@ -233,7 +233,7 @@ class JobManager {
             this.bree.add(breeJob);
             return this.bree.start(name);
         } else {
-            logging.info(`Adding one-off job to queue with current length = ${this.queue.length()} called '${name || 'anonymous'}'`);
+            // logging.info(`Adding one-off job to queue with current length = ${this.queue.length()} called '${name || 'anonymous'}'`);
 
             this.queue.push(async () => {
                 try {
@@ -404,7 +404,6 @@ class JobManager {
         let isProcessing = false;
 
         const processNextJob = async () => {
-            console.log('Processing next job');
             if (isProcessing) {
                 return;
             }
