@@ -5,7 +5,7 @@ async function add({a, b}) {
     if (!a || !b) {
         throw new Error('Invalid input');
     }
-    await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 4000)); // Random delay between 1-5 seconds
     return a + b;
 }
 

@@ -26,91 +26,18 @@ class JobManagerBackground {
         this.reportStats();
 
         if (this.#testMode) {
-            // console.log(`--test mode--`);
-            // const jobs = await this.jobsRepository.getQueuedJobs();
-            // jobs.forEach((job) => {
-                // console.log(`--job--`, job.get('name'));
-            // });
-            // console.log(`--jobs--`, jobs);
-            this.startTestLoop();
-            // this.startPoller();
-            // this.startPoller();
-            // this.startPoller();
+            this.testDataContinuousFill();
             this.startQueueFiller();
         }
     }
 
-    startTestLoop() {
+    testDataContinuousFill() {
         setInterval(() => {
             console.log(`--adding 50 test entries--`);
             for (let i = 0; i < 50; i++) {
                 this.addJob(`test-entry-${Date.now()}-${i}`, {job: 'testEntryJob', data: {a: 1, b: 2}});
             }
         }, 5000);
-    }
-
-    // create a poller that will pick up jobs from the repo and push them to the worker pool
-    // the worker pool will then process the job and update the job status in the repo
-    // the poller will then mark the job as done in the repo
-    // the poller will then repeat
-    // NOTE: This is single-threaded so it will not populate more than one worker, ie it won't fill up a queue.
-    async startPoller() {
-        const POLL_INTERVAL = 5000; // 5 seconds
-        let isPolling = false;
-
-        const poll = async () => {
-            if (isPolling) {
-                return;
-            }
-
-            isPolling = true;
-            try {
-                const queuedJob = await this.jobsRepository.getNextQueuedJob();
-                if (queuedJob) {
-                    const name = queuedJob.get('name');
-                    console.log(`--attempting to process job: ${name}`);
-                    const metadata = JSON.parse(queuedJob.get('metadata'));
-
-                    // Update job status to started
-                    await this.jobsRepository.update(queuedJob.id, {
-                        status: 'started',
-                        started_at: new Date()
-                    });
-
-                    // Process the job in the worker pool
-                    try {
-                        const {job, data} = metadata;
-                        console.log(`--processing job-- ${job} with metadata ${metadata}`);
-                        await this.pool.exec(job, [data.a, data.b]);
-                        console.log(`--job completed successfully--`);
-
-                        // Job completed successfully
-                        await this.jobsRepository.delete(queuedJob.id);
-                    } catch (error) {
-                        console.error(`--job failed: `, error);
-                        // Job failed
-                        await this.jobsRepository.update(queuedJob.id, {
-                            status: 'failed',
-                            finished_at: new Date(),
-                            error: error.message
-                        });
-                    }
-
-                    // Immediately check for next job
-                    setImmediate(poll);
-                }
-            } catch (error) {
-                console.error('Error in job poller:', error);
-            } finally {
-                isPolling = false;
-            }
-        };
-
-        // Start the polling process
-        this.pollerInterval = setInterval(poll, POLL_INTERVAL);
-
-        // Initial poll
-        poll();
     }
 
     async startQueueFiller() {
