@@ -198,8 +198,16 @@ module.exports = {
             updateQuery.email_open_rate = Math.round(emailOpenedCount.count / trackedEmailCount * 100);
         }
 
-        await db.knex('members')
-            .update(updateQuery)
-            .where('id', memberId);
+        let result;
+        try {
+            result = await db.knex('members')
+                .update(updateQuery)
+                .where('id', memberId);
+        } catch (error) {
+            debug(`Error updating member stats for member ${memberId}: ${error.message}`);
+            throw error;
+        }
+
+        return result;
     }
 };
