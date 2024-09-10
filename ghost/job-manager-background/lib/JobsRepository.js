@@ -48,7 +48,12 @@ class JobsRepository {
     }
 
     async delete(id) {
-        await this._JobModel.destroy({id});
+        console.log(`attempting to delete job ${id}`);
+        try {
+            await this._JobModel.destroy({id});
+        } catch (error) {
+            console.error(`Error deleting job ${id}:`, error);
+        }
     }
 }
 
