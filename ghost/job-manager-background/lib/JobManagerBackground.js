@@ -32,14 +32,8 @@ class JobManagerBackground {
      * @returns {Promise<void>}
      */
     async init() {
-        console.log(`[JobManager] Initializing`);
-
-        this.reportStats();
-
-        if (this.#testMode) {
-            // this.testDataContinuousFill();
-            this.startQueueFiller();
-        }
+        console.log(`[JobManager] Initializing job queue`);
+        this.startQueueFiller();
     }
 
     /**
@@ -87,12 +81,12 @@ class JobManagerBackground {
             }
 
             isPolling = true;
-            console.log(`[JobManager] Polling for jobs, current interval: ${Math.floor(currentPollInterval / 1000)}s`);
+            console.log(`[JobManager] Polling for jobs; current interval: ${Math.floor(currentPollInterval / 1000)}s`);
             try {
                 const stats = await this.getStats();
                 if (stats.pendingTasks <= 500) {
                     const entriesToAdd = Math.min(500, 501 - stats.pendingTasks);
-                    console.log(`[JobManager] Adding ${entriesToAdd} queue entries. Current pending tasks: ${stats.pendingTasks}`);
+                    console.log(`[JobManager] Adding up to ${entriesToAdd} queue entries. Current pending tasks: ${stats.pendingTasks}. Current worker count: ${stats.totalWorkers}`);
                     const jobs = await this.jobsRepository.getQueuedJobs(entriesToAdd);
 
                     if (jobs.length > 0) {
