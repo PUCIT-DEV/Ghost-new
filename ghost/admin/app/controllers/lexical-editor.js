@@ -618,6 +618,21 @@ export default class LexicalEditorController extends Controller {
         try {
             let post = yield this._savePostTask.perform({...options, adapterOptions});
 
+            // Add this block to save to localStorage
+            try {
+                const postData = {
+                    id: post.id || `${Date.now()}`, // fall back to timestamp if no id
+                    lexical: post.lexical,
+                    title: post.title,
+                    updatedAt: post.updatedAt
+                };
+                localStorage.setItem(`post_backup_${post.id}`, JSON.stringify(postData));
+                // log what we stored in local storage to the console
+                console.log(`[localStorage] Post ${post.id} saved to localStorage:`, localStorage.getItem(`post_backup_${post.id}`));
+            } catch (localStorageError) {
+                console.warn('Failed to save post to localStorage:', localStorageError);
+            }
+
             // Clear any error notification (if any)
             this.notifications.clearAll();
 
