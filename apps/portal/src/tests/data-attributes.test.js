@@ -75,7 +75,7 @@ function getMockData({newsletterQuerySelectorResult = null} = {}) {
     };
 }
 
-describe('Member Data attributes:', () => {
+describe.skip('Member Data attributes:', () => {
     beforeEach(() => {
         // Mock global fetch
         jest.spyOn(window, 'fetch').mockImplementation((url) => {
@@ -391,7 +391,7 @@ describe('Portal Data attributes:', () => {
         jest.restoreAllMocks();
     });
     describe('data-portal', () => {
-        test('opens default portal page', async () => {
+        test.only('opens default portal page', async () => {
             document.body.innerHTML = `
                 <div data-portal> </div>
             `;

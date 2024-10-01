@@ -576,11 +576,15 @@ function setupGhostApi({siteUrl = window.location.origin, apiUrl, apiKey}) {
         let settings = {};
 
         try {
-            [{settings}, {tiers}, {newsletters}] = await Promise.all([
+            const [settingsResponse, tiersResponse, newslettersResponse] = await Promise.all([
                 api.site.settings(),
                 api.site.tiers(),
                 api.site.newsletters()
             ]);
+
+            settings = settingsResponse.settings;
+            tiers = tiersResponse.tiers;
+            newsletters = newslettersResponse.newsletters;
             site = {
                 ...settings,
                 newsletters,
