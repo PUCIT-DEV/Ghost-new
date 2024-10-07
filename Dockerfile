@@ -25,6 +25,8 @@ RUN yarn install
 # Copy all the rest of the application code
 COPY . .
 
+ENV NX_DAEMON=true
+
 # Expose the port the app runs on
 EXPOSE 2368
 
