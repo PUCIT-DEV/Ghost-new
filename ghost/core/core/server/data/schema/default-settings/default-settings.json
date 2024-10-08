@@ -83,13 +83,11 @@
             "type": "string"
         },
         "heading_font": {
-            "defaultValue": "Theme default",
-            "flags": "PUBLIC",
+            "defaultValue": "",
             "type": "string"
         },
         "body_font": {
-            "defaultValue": "Theme default",
-            "flags": "PUBLIC",
+            "defaultValue": "",
             "type": "string"
         },
         "logo": {
