@@ -50,12 +50,12 @@ export default class SetupController extends Controller.extend(ValidationEngine)
     })
         setupTask;
 
-    @task(function* (authStrategy, authentication) {
+    @task(function* (authStrategy, {identification, password}) {
         // we don't want to redirect after sign-in during setup
         this.session.skipAuthSuccessHandler = true;
 
         try {
-            yield this.session.authenticate(authStrategy, ...authentication);
+            yield this.session.authenticate(authStrategy, {identification, password});
 
             this.errors.remove('session');
 
