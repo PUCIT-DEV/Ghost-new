@@ -106,7 +106,7 @@ module.exports = function createSessionService({getSession, findUserById, getOri
      */
     async function removeUserForSession(req, res) {
         const session = await getSession(req, res);
-        delete session.user_id;
+        session.user_id = undefined;
     }
 
     /**
