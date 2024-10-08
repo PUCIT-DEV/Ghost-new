@@ -116,9 +116,6 @@ typings/
 # Test generated files
 test/functional/*.png
 
-# ignore all custom json files for config
-/ghost/core/config.*.json
-
 # Built asset files
 /ghost/core/core/built
 /ghost/core/core/frontend/public/ghost.min.css

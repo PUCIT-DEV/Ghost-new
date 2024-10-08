@@ -1,7 +1,7 @@
 {
     "url": "http://localhost:2368",
     "server": {
-        "host": "0.0.0.0",
+        "host": "127.0.0.1",
         "port": 2368,
         "shutdownTimeout": 60000
     },
