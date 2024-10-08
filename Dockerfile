@@ -10,8 +10,8 @@ WORKDIR /home/ghost
 COPY . .
 
 # Remove everything but the package.json files
-RUN find ghost \! -name "package.json" -mindepth 2 -maxdepth 2 -print | xargs rm -rf
-RUN find apps \! -name "package.json" -mindepth 2 -maxdepth 2 -print | xargs rm -rf
+RUN find ghost \! -name "package.json" -mindepth 2 -print | xargs rm -rf
+RUN find apps \! -name "package.json" -mindepth 2 -print | xargs rm -rf
 
 ## Stage 1
 FROM node:$NODE_VERSION-bullseye
@@ -25,6 +25,8 @@ RUN yarn install
 # Copy all the rest of the application code
 COPY . .
 
+RUN git submodule update --init
+
 ENV NX_DAEMON=true
 
 # Expose the port the app runs on
@@ -32,4 +34,3 @@ EXPOSE 2368
 
 # Define the command to run the app
 CMD ["yarn", "dev"]
-
