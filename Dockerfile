@@ -31,6 +31,7 @@ ENV NX_DAEMON=true
 
 # Expose the port the app runs on
 EXPOSE 2368
+EXPOSE 4200
 
 # Define the command to run the app
 CMD ["yarn", "dev"]

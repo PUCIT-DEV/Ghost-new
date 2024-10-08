@@ -1,0 +1,11 @@
+name: ghost-full-docker
+
+services:
+  ghost:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "2368:2368"
+      - "4200:4200"
+    restart: always
