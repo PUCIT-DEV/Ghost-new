@@ -82,8 +82,13 @@
             "flags": "PUBLIC",
             "type": "string"
         },
-        "paragraph_font": {
-            "defaultValue": "",
+        "heading_font": {
+            "defaultValue": "Theme default",
+            "flags": "PUBLIC",
+            "type": "string"
+        },
+        "body_font": {
+            "defaultValue": "Theme default",
             "flags": "PUBLIC",
             "type": "string"
         },
