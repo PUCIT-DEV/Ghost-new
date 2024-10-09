@@ -1,5 +1,4 @@
 const {Store} = require('express-session');
-const {InternalServerError} = require('@tryghost/errors');
 
 module.exports = class SessionStore extends Store {
     constructor(SessionModel) {
