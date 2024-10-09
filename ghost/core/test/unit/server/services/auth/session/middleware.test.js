@@ -89,7 +89,7 @@ describe('Session Service', function () {
 
             const middleware = SessionMiddlware({
                 sessionService: {
-                    createSessionForUser: function (req, res, user) {
+                    createSessionForUser: function () {
                         return Promise.resolve();
                     },
                     isVerifiedSession: function () {
