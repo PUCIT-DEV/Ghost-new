@@ -227,8 +227,12 @@ describe('SessionService', function () {
         const authCode = await sessionService.generateAuthCodeForUser(req, res);
         should.exist(authCode);
 
+        req.body = {
+            token: authCode
+        };
+
         // Verify the auth code
-        const isValid = await sessionService.verifyAuthCodeForUser(req, res, authCode);
+        const isValid = await sessionService.verifyAuthCodeForUser(req, res);
         should.equal(isValid, true);
     });
 
@@ -273,8 +277,12 @@ describe('SessionService', function () {
         const authCode = await sessionService.generateAuthCodeForUser(req, res);
         should.exist(authCode);
 
+        req.body = {
+            token: 'wrong-code'
+        };
+
         // Verify an incorrect auth code
-        const isValid = await sessionService.verifyAuthCodeForUser(req, res, 'wrong-code');
+        const isValid = await sessionService.verifyAuthCodeForUser(req, res);
         should.equal(isValid, false);
     });
 
