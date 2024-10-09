@@ -62,7 +62,7 @@ const features = [{
 }, {
     title: 'Staff 2FA',
     description: 'Enables email verification for staff logins',
-    flag: 'staff2Fa'
+    flag: 'staff2fa'
 }];
 
 const AlphaFeatures: React.FC = () => {
