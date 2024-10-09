@@ -199,13 +199,13 @@ describe('SessionService', function () {
         };
         const findUserById = sinon.spy(async ({id}) => ({id}));
         const getOriginOfRequest = sinon.stub().returns('origin');
-        const getSecret = sinon.stub().returns('secret-key');
+        const getSettingsCache = sinon.stub().returns('secret-key');
 
         const sessionService = SessionService({
             getSession,
             findUserById,
             getOriginOfRequest,
-            getSecret
+            getSettingsCache
         });
 
         const req = Object.create(express.request, {
@@ -249,13 +249,13 @@ describe('SessionService', function () {
         };
         const findUserById = sinon.spy(async ({id}) => ({id}));
         const getOriginOfRequest = sinon.stub().returns('origin');
-        const getSecret = sinon.stub().returns('secret-key');
+        const getSettingsCache = sinon.stub().returns('secret-key');
 
         const sessionService = SessionService({
             getSession,
             findUserById,
             getOriginOfRequest,
-            getSecret
+            getSettingsCache
         });
 
         const req = Object.create(express.request, {
@@ -321,7 +321,7 @@ describe('SessionService', function () {
             getSession,
             findUserById,
             getOriginOfRequest,
-            getSecret: getSecretFirst
+            getSettingsCache: getSecretFirst
         });
 
         const authCodeFirst = await sessionServiceFirst.generateAuthCodeForUser(req, res);
@@ -332,7 +332,7 @@ describe('SessionService', function () {
             getSession,
             findUserById,
             getOriginOfRequest,
-            getSecret: getSecretSecond
+            getSettingsCache: getSecretSecond
         });
 
         const authCodeSecond = await sessionServiceSecond.generateAuthCodeForUser(req, res);
