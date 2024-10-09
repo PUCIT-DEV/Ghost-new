@@ -59,5 +59,8 @@ module.exports.createSessionFromToken = sessionFromToken({
     getTokenFromRequest: ssoAdapter.getRequestCredentials.bind(ssoAdapter)
 });
 
+// TODO: We have 51 lines here, should move functions out into a utils module
+/* eslint-disable max-lines */
+
 module.exports.sessionService = sessionService;
 module.exports.deleteAllSessions = expressSession.deleteAllSessions;
