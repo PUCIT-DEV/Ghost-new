@@ -12,7 +12,7 @@ export default class SigninVerifyController extends Controller {
     @tracked token = '';
 
     @action
-    validateToken(token) {
+    validateToken() {
         return true;
     }
 
