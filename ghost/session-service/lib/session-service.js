@@ -198,6 +198,7 @@ module.exports = function createSessionService({getSession, findUserById, getOri
         removeUserForSession,
         verifySession,
         sendAuthCodeToUser,
-        verifyAuthCodeForUser
+        verifyAuthCodeForUser,
+        generateAuthCodeForUser
     };
 };
