@@ -52,7 +52,9 @@ export default class SigninVerifyController extends Controller {
     @task
     *verifyTokenTask() {
         try {
-            yield this.session.authenticate('authenticator:cookie', {token: this.verifyData.token});
+            yield this.session.authenticate('authenticator:cookie', {token: this.verifyData.token})
+
+            return true;
         } catch (error) {
             if (error && error.payload && error.payload.errors) {
                 this.flowErrors = error.payload.errors[0].message;
