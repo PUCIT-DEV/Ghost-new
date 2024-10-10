@@ -1,5 +1,4 @@
 const errors = require('@tryghost/errors');
-const labs = require('../../../../shared/labs');
 
 function SessionMiddleware({sessionService}) {
     async function createSession(req, res, next) {
