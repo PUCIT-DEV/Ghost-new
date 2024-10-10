@@ -1104,13 +1104,6 @@ kbd {
 
 /* Dashboard */
 
-.gh-dashboard-box.is-secondary, .gh-dashboard-resource-box,
-.gh-main-section-content.grey,
-.gh-expandable,
-.gh-expandable-content {
-    background: #1C1E22;
-}
-
 .gh-dashboard .gh-dashboard-anchor .gh-dashboard-stats {
     background: transparent;
     border-top-color: #2b2d31;
@@ -1198,7 +1191,7 @@ kbd {
 }
 
 .gh-dashboard-tooltip {
-    background: var(--whitegrey);
+    background: var(--whitegrey-l2);
 }
 
 /* Empty states */
