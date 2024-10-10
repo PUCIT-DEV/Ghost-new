@@ -226,8 +226,6 @@ module.exports = function createSessionService({
     async function sendAuthCodeToUser(req, res) {
         const session = await getSession(req, res);
         const token = await generateAuthCodeForUser(req, res);
-
-        const session = await getSession(req, res);
         const user = await findUserById({id: session.user_id});
 
         if (!user) {
