@@ -234,7 +234,11 @@ module.exports = function createSessionService({
         }
         const recipient = user.get('email');
         const siteTitle = getSettingsCache('title');
-        const siteLogo = urlUtils.urlFor('image', {image: getSettingsCache('logo')}, true);
+        let siteLogo = 'https://static.ghost.org/v4.0.0/images/ghost-orb-1.png';
+        const siteLogoFile = getSettingsCache('logo');
+        if (siteLogoFile) {
+            siteLogo = urlUtils.urlFor('image', {image: siteLogoFile}, true);
+        }
         const siteUrl = urlUtils.urlFor('home', true);
         const domain = urlUtils.urlFor('home', true).match(new RegExp('^https?://([^/:?#]+)(?:[/:?#]|$)', 'i'));
         const siteDomain = (domain && domain[1]);
