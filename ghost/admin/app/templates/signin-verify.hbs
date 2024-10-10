@@ -14,7 +14,6 @@
                 <GhFormGroup @errors={{this.verifyData.errors}} @hasValidated={{this.verifyData.hasValidated}} @property="token">
                     <label for="token">Verification code</label>
 
-                    <!-- TODO: Styles taken from login input (i.e forgotten-wrap, forgotten-link), needs updating -->
                     <span class="gh-input-icon forgotten-wrap">
                         <input
                             id="token"
@@ -40,7 +39,7 @@
                             @disabled={{this.resendTokenCountdownStarted}}
                             as |task|
                         >
-                            {{#if resendTokenCountdownStarted}}
+                            {{#if this.resendTokenCountdownStarted}}
                                 <span>Resend again in {{this.resendTokenCountdown}}s</span>
                             {{else}}
                                 <span>{{#if task.isRunning}}{{svg-jar "spinner" class="gh-spinner"}}&nbsp;Sending{{else}}Resend{{/if}}</span>
