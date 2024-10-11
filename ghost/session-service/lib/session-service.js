@@ -253,7 +253,7 @@ module.exports = function createSessionService({
 
         await mailer.send({
             to: recipient,
-            subject: `${token} is your Ghost signin verification code`,
+            subject: `${token} is your ghost signin verification code`,
             html: email
         });
     }
