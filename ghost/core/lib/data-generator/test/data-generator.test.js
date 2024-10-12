@@ -11,7 +11,7 @@ const generateEvents = require('../lib/utils/event-generator');
 
 const DataGenerator = require('../index');
 
-const schema = require('../../core/core/server/data/schema');
+const schema = require('../../../core/server/data/schema');
 
 const schemaTables = schema.tables;
 
