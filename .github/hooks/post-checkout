@@ -1,5 +1,7 @@
 #!/bin/bash
 
-echo "Post-checkout hook"
-
-echo "End post-checkout hook"
+echo "Running yarn"
+yarn
+echo "Updating submodules"
+git submodule update --init
+echo "Done"
