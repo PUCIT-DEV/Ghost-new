@@ -1,7 +1,2 @@
 #!/bin/bash
-
-echo "Running yarn"
-yarn
-echo "Updating submodules"
-git submodule update --init
-echo "Done"
+git submodule update --init --recursive
