@@ -1,4 +1,4 @@
 #!/bin/bash
-echo "Updating submodules"
+echo -n "Updating submodules"
 git submodule update --init --recursive
 echo "Done"
